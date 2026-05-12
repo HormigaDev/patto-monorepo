@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "description": "Official CLI for Patto Bot Template",
     "type": "module",
+    "license": "AGPL-3.0-only",
     "bin": {
         "patto": "./dist/index.js"
     },
@@ -33,6 +34,7 @@
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
+        "@types/node": "^24.10.0",
         "@types/prompts": "^2.4.9",
         "tsx": "^4.20.0",
         "typescript": "^6.0.3"

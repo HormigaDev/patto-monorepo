@@ -1,0 +1,11 @@
+.vscode/**
+.vscode-test/**
+src/**
+node_modules/**
+out/**
+**/*.map
+tsconfig.json
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+*.vsix

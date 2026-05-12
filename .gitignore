@@ -1,6 +1,5 @@
 MEMORY.md
 
-dist/
 node_modules/
 coverage/
 *.log
@@ -18,6 +17,7 @@ coverage/
 *.pid.lock
 *.gz
 *.zip
+*.vsix
 *.tar
 *.rar
 *.7z
@@ -43,5 +43,7 @@ build/
 
 !package.json
 !packages/**/package.json
+!packages/**/tsconfig.json
+!pnpm-lock.yaml
 !tsconfig.base.json
 !pnpm-workspace.yaml

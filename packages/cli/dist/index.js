@@ -3,29 +3,27 @@ import { cac } from 'cac';
 import chalk from 'chalk';
 import { registerCoreCommands, writeStructuredError } from './commands/core.js';
 import { registerGenerateCommand } from './commands/generate.js';
-
 const cli = cac('patto');
-
 cli.version('0.1.0');
 cli.help();
-
 registerGenerateCommand(cli);
 registerCoreCommands(cli);
-
 try {
     cli.parse(process.argv, { run: false });
-
     if (cli.matchedCommand === undefined) {
         cli.outputHelp();
-    } else {
+    }
+    else {
         await cli.runMatchedCommand();
     }
-} catch (error) {
+}
+catch (error) {
     if (process.argv.includes('--stdin')) {
         writeStructuredError(error);
-    } else {
+    }
+    else {
         console.error(chalk.red(error instanceof Error ? error.message : String(error)));
     }
-
     process.exitCode = 1;
 }
+//# sourceMappingURL=index.js.map

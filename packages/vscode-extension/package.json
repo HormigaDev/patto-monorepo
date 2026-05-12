@@ -1,0 +1,104 @@
+{
+    "name": "patto",
+    "displayName": "Patto",
+    "description": "Diagnostics and tooling for Patto Bot Template projects.",
+    "version": "0.1.0",
+    "publisher": "hormigadev",
+    "license": "AGPL-3.0-only",
+    "type": "commonjs",
+    "main": "./dist/extension.js",
+    "engines": {
+        "vscode": "^1.90.0",
+        "node": ">=18"
+    },
+    "categories": [
+        "Linters",
+        "Other"
+    ],
+    "keywords": [
+        "patto",
+        "discord",
+        "bot",
+        "lint",
+        "diagnostics"
+    ],
+    "galleryBanner": {
+        "color": "#5180d6",
+        "theme": "dark"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/HormigaDev/patto-monorepo"
+    },
+    "bugs": {
+        "url": "https://github.com/HormigaDev/patto-monorepo/issues"
+    },
+    "homepage": "https://github.com/HormigaDev/patto-monorepo#readme",
+    "activationEvents": [
+        "onStartupFinished",
+        "onCommand:patto.check",
+        "onCommand:patto.lint",
+        "workspaceContains:.patto/config.json",
+        "workspaceContains:src/core/structures/BaseCommand.ts"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "patto.check",
+                "title": "Patto: Check Project"
+            },
+            {
+                "command": "patto.lint",
+                "title": "Patto: Lint Project"
+            },
+            {
+                "command": "patto.installCli",
+                "title": "Patto: Install CLI"
+            }
+        ],
+        "configuration": {
+            "title": "Patto",
+            "properties": {
+                "patto.enableDiagnostics": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable Patto diagnostics in the editor."
+                },
+                "patto.diagnosticsCommand": {
+                    "type": "string",
+                    "enum": [
+                        "lint",
+                        "check"
+                    ],
+                    "default": "lint",
+                    "description": "Core command used for editor diagnostics."
+                },
+                "patto.cliPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Optional path to the patto CLI executable."
+                },
+                "patto.autoInstallCli": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Install @patto/cli globally when the CLI is not available."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "pnpm run build",
+        "build": "tsc -p tsconfig.json",
+        "watch": "tsc -w -p tsconfig.json",
+        "lint": "tsc -p tsconfig.json --noEmit",
+        "package:vsix": "vsce package",
+        "publish:marketplace": "vsce publish",
+        "test": "echo \"tests pending\""
+    },
+    "devDependencies": {
+        "@types/node": "^24.10.0",
+        "@types/vscode": "^1.90.0",
+        "@vscode/vsce": "^3.6.3",
+        "typescript": "^6.0.3"
+    }
+}

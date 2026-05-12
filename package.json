@@ -1,0 +1,24 @@
+{
+    "name": "patto-monorepo",
+    "private": true,
+    "packageManager": "pnpm@10.0.0",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "pnpm -r build",
+        "build:core": "bash ./build-cli-core.sh",
+        "dev": "pnpm --filter @patto/cli dev",
+        "test": "pnpm -r test",
+        "lint": "pnpm -r lint"
+    },
+    "devDependencies": {},
+    "keywords": [],
+    "author": {
+        "email": "hormigadev7@gmail.com",
+        "name": "HormigaDev",
+        "url": "https://hormiga.dev"
+    },
+    "license": "AGPL-3.0-only",
+    "type": "module"
+}

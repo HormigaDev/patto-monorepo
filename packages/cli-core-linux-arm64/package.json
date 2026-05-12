@@ -1,0 +1,21 @@
+{
+    "name": "@patto/cli-core-linux-arm64",
+    "version": "0.1.0",
+    "description": "Patto CLI native core for Linux arm64.",
+    "os": [
+        "linux"
+    ],
+    "cpu": [
+        "arm64"
+    ],
+    "files": [
+        "bin"
+    ],
+    "bin": {
+        "patto-core": "./bin/patto-core"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "ISC"
+}

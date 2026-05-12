@@ -1,0 +1,40 @@
+{
+    "name": "@patto/cli",
+    "version": "0.1.0",
+    "description": "Official CLI for Patto Bot Template",
+    "type": "module",
+    "bin": {
+        "patto": "./dist/index.js"
+    },
+    "exports": {
+        ".": "./dist/index.js"
+    },
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev": "tsx src/index.ts",
+        "build": "tsc -p tsconfig.json",
+        "start": "node dist/index.js",
+        "test": "echo \"tests pending\""
+    },
+    "dependencies": {
+        "cac": "^6.7.14",
+        "chalk": "^5.3.0",
+        "execa": "^9.0.0",
+        "fs-extra": "^11.2.0",
+        "ora": "^8.1.0",
+        "prompts": "^2.4.2"
+    },
+    "optionalDependencies": {
+        "@patto/cli-core-linux-arm64": "workspace:*",
+        "@patto/cli-core-linux-x64": "workspace:*",
+        "@patto/cli-core-win32-x64": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^11.0.4",
+        "@types/prompts": "^2.4.9",
+        "tsx": "^4.20.0",
+        "typescript": "^6.0.3"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "@patto/cli-core-linux-x64",
+    "version": "0.1.0",
+    "description": "Patto CLI native core for Linux x64.",
+    "os": [
+        "linux"
+    ],
+    "cpu": [
+        "x64"
+    ],
+    "files": [
+        "bin"
+    ],
+    "bin": {
+        "patto-core": "./bin/patto-core"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "ISC"
+}

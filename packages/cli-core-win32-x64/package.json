@@ -1,0 +1,21 @@
+{
+    "name": "@patto/cli-core-win32-x64",
+    "version": "0.1.0",
+    "description": "Patto CLI native core for Windows x64.",
+    "os": [
+        "win32"
+    ],
+    "cpu": [
+        "x64"
+    ],
+    "files": [
+        "bin"
+    ],
+    "bin": {
+        "patto-core": "./bin/patto-core.exe"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "ISC"
+}

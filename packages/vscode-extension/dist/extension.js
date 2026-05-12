@@ -49,10 +49,13 @@ function activate(context) {
     const output = vscode.window.createOutputChannel('Patto');
     const collection = vscode.languages.createDiagnosticCollection('patto');
     context.subscriptions.push(output, collection);
-    context.subscriptions.push(vscode.commands.registerCommand('patto.check', () => runDiagnostics('check', collection, output, true)), vscode.commands.registerCommand('patto.lint', () => runDiagnostics('lint', collection, output, true)), vscode.commands.registerCommand('patto.installCli', async () => {
-        await (0, cli_1.ensurePattoCli)(output);
+    context.subscriptions.push(vscode.commands.registerCommand('patto.check', () => runDiagnostics('check', collection, output, true)), vscode.commands.registerCommand('patto.lint', () => runDiagnostics('lint', collection, output, true)), vscode.commands.registerCommand('patto.showCliSetup', async () => {
+        await (0, cli_1.showCliSetupMessage)();
     }), vscode.workspace.onDidSaveTextDocument((document) => {
-        if (document.languageId === 'typescript') {
+        const runOnSave = vscode.workspace
+            .getConfiguration('patto')
+            .get('runDiagnosticsOnSave', true);
+        if (runOnSave && document.languageId === 'typescript') {
             scheduleDiagnostics(collection, output);
         }
     }), vscode.workspace.onDidChangeConfiguration((event) => {
@@ -60,8 +63,8 @@ function activate(context) {
             scheduleDiagnostics(collection, output);
         }
     }));
-    if (shouldRunInitialDiagnostics()) {
-        scheduleDiagnostics(collection, output);
+    if (isPattoWorkspace()) {
+        output.appendLine('Patto workspace detected. Diagnostics will run on save or by command.');
     }
 }
 function deactivate() {
@@ -90,7 +93,7 @@ async function runDiagnostics(command, collection, output, revealOutput) {
         vscode.window.showWarningMessage('Abre un proyecto Patto para ejecutar diagnostics.');
         return;
     }
-    const cliPath = await (0, cli_1.ensurePattoCli)(output);
+    const cliPath = await (0, cli_1.ensurePattoCli)();
     if (!cliPath) {
         return;
     }
@@ -115,7 +118,7 @@ async function runDiagnostics(command, collection, output, revealOutput) {
         vscode.window.showErrorMessage(`Patto fallo: ${message}`);
     }
 }
-function shouldRunInitialDiagnostics() {
+function isPattoWorkspace() {
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
     return workspaceFolders.some((folder) => {
         const root = folder.uri.fsPath;

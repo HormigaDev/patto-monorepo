@@ -14,7 +14,6 @@ export function runProcess(
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
             cwd: options.cwd,
-            shell: process.platform === 'win32',
             windowsHide: true,
             stdio: ['pipe', 'pipe', 'pipe'],
         });

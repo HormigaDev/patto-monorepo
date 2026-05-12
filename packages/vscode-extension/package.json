@@ -35,9 +35,9 @@
     },
     "homepage": "https://github.com/HormigaDev/patto-monorepo#readme",
     "activationEvents": [
-        "onStartupFinished",
         "onCommand:patto.check",
         "onCommand:patto.lint",
+        "onCommand:patto.showCliSetup",
         "workspaceContains:.patto/config.json",
         "workspaceContains:src/core/structures/BaseCommand.ts"
     ],
@@ -52,8 +52,8 @@
                 "title": "Patto: Lint Project"
             },
             {
-                "command": "patto.installCli",
-                "title": "Patto: Install CLI"
+                "command": "patto.showCliSetup",
+                "title": "Patto: Show CLI Setup"
             }
         ],
         "configuration": {
@@ -78,10 +78,10 @@
                     "default": "",
                     "description": "Optional path to the patto CLI executable."
                 },
-                "patto.autoInstallCli": {
+                "patto.runDiagnosticsOnSave": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Install @patto/cli globally when the CLI is not available."
+                    "description": "Run Patto diagnostics when TypeScript files are saved."
                 }
             }
         }

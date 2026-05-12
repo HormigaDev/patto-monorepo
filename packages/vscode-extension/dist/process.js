@@ -6,7 +6,6 @@ function runProcess(command, args, options = {}) {
     return new Promise((resolve, reject) => {
         const child = (0, node_child_process_1.spawn)(command, args, {
             cwd: options.cwd,
-            shell: process.platform === 'win32',
             windowsHide: true,
             stdio: ['pipe', 'pipe', 'pipe'],
         });

@@ -6,7 +6,7 @@ import type { PattoCoreCommand, PattoCoreEnvelope } from './types';
 
 const CLI_PACKAGE = '@patto/cli';
 
-export async function ensurePattoCli(output: vscode.OutputChannel): Promise<string | null> {
+export async function ensurePattoCli(): Promise<string | null> {
     const configuredPath = vscode.workspace.getConfiguration('patto').get<string>('cliPath')?.trim();
 
     if (configuredPath) {
@@ -23,26 +23,24 @@ export async function ensurePattoCli(output: vscode.OutputChannel): Promise<stri
         return localCli;
     }
 
-    const autoInstall = vscode.workspace
-        .getConfiguration('patto')
-        .get<boolean>('autoInstallCli', true);
+    await showCliSetupMessage();
+    return null;
+}
 
-    if (!autoInstall) {
-        vscode.window.showWarningMessage(
-            'Patto CLI no esta instalado. Configura patto.cliPath o activa patto.autoInstallCli.',
+export async function showCliSetupMessage(): Promise<void> {
+    const choice = await vscode.window.showWarningMessage(
+        `Patto CLI no esta instalado. Instala ${CLI_PACKAGE} manualmente o configura una ruta personalizada.`,
+        'Configurar ruta',
+        'Abrir README',
+    );
+
+    if (choice === 'Configurar ruta') {
+        await vscode.commands.executeCommand('workbench.action.openSettings', 'patto.cliPath');
+    } else if (choice === 'Abrir README') {
+        await vscode.env.openExternal(
+            vscode.Uri.parse('https://github.com/HormigaDev/patto-monorepo/tree/main/packages/vscode-extension#cli-setup'),
         );
-        return null;
     }
-
-    const nodeAvailable = await commandExists('node');
-
-    if (!nodeAvailable) {
-        vscode.window.showErrorMessage('Patto necesita Node.js instalado para usar el CLI.');
-        return null;
-    }
-
-    const installed = await installCli(output);
-    return installed ? 'patto' : null;
 }
 
 export async function runPattoCore(
@@ -51,7 +49,8 @@ export async function runPattoCore(
     command: PattoCoreCommand,
 ): Promise<PattoCoreEnvelope> {
     const request = JSON.stringify({ command, root, lang: 'es' });
-    const result = await runProcess(cliPath, ['core', '--stdin'], {
+    const invocation = buildCliInvocation(cliPath, ['core', '--stdin']);
+    const result = await runProcess(invocation.command, invocation.args, {
         cwd: root,
         input: request,
     });
@@ -69,62 +68,18 @@ export async function runPattoCore(
     }
 }
 
-async function installCli(output: vscode.OutputChannel): Promise<boolean> {
-    const packageManager = (await commandExists('pnpm')) ? 'pnpm' : 'npm';
-
-    if (packageManager === 'npm' && !(await commandExists('npm'))) {
-        vscode.window.showErrorMessage(
-            'No encontre pnpm ni npm para instalar @patto/cli. Instala Node.js/npm y reintenta.',
-        );
-        return false;
+function buildCliInvocation(
+    cliPath: string,
+    args: string[],
+): { readonly command: string; readonly args: string[] } {
+    if (process.platform === 'win32' && cliPath.toLowerCase().endsWith('.cmd')) {
+        return {
+            command: 'cmd.exe',
+            args: ['/d', '/s', '/c', cliPath, ...args],
+        };
     }
 
-    const args =
-        packageManager === 'pnpm'
-            ? ['add', '-g', CLI_PACKAGE]
-            : ['install', '-g', CLI_PACKAGE];
-
-    output.appendLine(`Instalando ${CLI_PACKAGE} con ${packageManager}...`);
-
-    const choice = await vscode.window.showInformationMessage(
-        'Patto CLI no esta instalado. ¿Instalar @patto/cli globalmente?',
-        'Instalar',
-        'Cancelar',
-    );
-
-    if (choice !== 'Instalar') {
-        return false;
-    }
-
-    return vscode.window.withProgress(
-        {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Instalando Patto CLI',
-            cancellable: false,
-        },
-        async () => {
-            const result = await runProcess(packageManager, args);
-            output.append(result.stdout);
-            output.append(result.stderr);
-
-            if (result.exitCode !== 0) {
-                vscode.window.showErrorMessage(
-                    `No se pudo instalar ${CLI_PACKAGE}. Revisa la salida "Patto".`,
-                );
-                return false;
-            }
-
-            if (!(await commandExists('patto'))) {
-                vscode.window.showWarningMessage(
-                    'Patto CLI se instalo, pero "patto" no aparece en PATH. Reinicia VSCode o configura patto.cliPath.',
-                );
-                return false;
-            }
-
-            vscode.window.showInformationMessage('Patto CLI instalado correctamente.');
-            return true;
-        },
-    );
+    return { command: cliPath, args };
 }
 
 function findWorkspaceCli(): string | null {

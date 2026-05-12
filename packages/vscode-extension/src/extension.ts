@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import * as vscode from 'vscode';
-import { ensurePattoCli, runPattoCore } from './cli';
+import { ensurePattoCli, runPattoCore, showCliSetupMessage } from './cli';
 import { applyDiagnostics } from './diagnostics';
 import type { PattoCoreCommand } from './types';
 import { getActiveWorkspaceFolder } from './workspace';
@@ -20,11 +20,15 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand('patto.lint', () =>
             runDiagnostics('lint', collection, output, true),
         ),
-        vscode.commands.registerCommand('patto.installCli', async () => {
-            await ensurePattoCli(output);
+        vscode.commands.registerCommand('patto.showCliSetup', async () => {
+            await showCliSetupMessage();
         }),
         vscode.workspace.onDidSaveTextDocument((document) => {
-            if (document.languageId === 'typescript') {
+            const runOnSave = vscode.workspace
+                .getConfiguration('patto')
+                .get<boolean>('runDiagnosticsOnSave', true);
+
+            if (runOnSave && document.languageId === 'typescript') {
                 scheduleDiagnostics(collection, output);
             }
         }),
@@ -35,8 +39,8 @@ export function activate(context: vscode.ExtensionContext): void {
         }),
     );
 
-    if (shouldRunInitialDiagnostics()) {
-        scheduleDiagnostics(collection, output);
+    if (isPattoWorkspace()) {
+        output.appendLine('Patto workspace detected. Diagnostics will run on save or by command.');
     }
 }
 
@@ -80,7 +84,7 @@ async function runDiagnostics(
         return;
     }
 
-    const cliPath = await ensurePattoCli(output);
+    const cliPath = await ensurePattoCli();
 
     if (!cliPath) {
         return;
@@ -115,7 +119,7 @@ async function runDiagnostics(
     }
 }
 
-function shouldRunInitialDiagnostics(): boolean {
+function isPattoWorkspace(): boolean {
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
 
     return workspaceFolders.some((folder) => {

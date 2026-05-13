@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 
 export function getActiveWorkspaceFolder(): vscode.WorkspaceFolder | null {
     const activeDocument = vscode.window.activeTextEditor?.document;
@@ -22,4 +24,27 @@ export function isPattoDocument(document: vscode.TextDocument): boolean {
     }
 
     return document.uri.fsPath.includes(`${folder.uri.fsPath}`);
+}
+
+export function isPattoWorkspaceFolder(folder: vscode.WorkspaceFolder): boolean {
+    const root = folder.uri.fsPath;
+
+    return (
+        existsSync(path.join(root, '.patto', 'config.json')) ||
+        existsSync(path.join(root, 'src', 'core', 'structures', 'BaseCommand.ts'))
+    );
+}
+
+export function getPattoWorkspaceFolders(): vscode.WorkspaceFolder[] {
+    return (vscode.workspace.workspaceFolders ?? []).filter(isPattoWorkspaceFolder);
+}
+
+export function getActivePattoWorkspaceFolder(): vscode.WorkspaceFolder | null {
+    const activeFolder = getActiveWorkspaceFolder();
+
+    if (activeFolder && isPattoWorkspaceFolder(activeFolder)) {
+        return activeFolder;
+    }
+
+    return getPattoWorkspaceFolders()[0] ?? null;
 }

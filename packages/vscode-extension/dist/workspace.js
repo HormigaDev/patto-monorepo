@@ -32,10 +32,18 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getActiveWorkspaceFolder = getActiveWorkspaceFolder;
 exports.isPattoDocument = isPattoDocument;
+exports.isPattoWorkspaceFolder = isPattoWorkspaceFolder;
+exports.getPattoWorkspaceFolders = getPattoWorkspaceFolders;
+exports.getActivePattoWorkspaceFolder = getActivePattoWorkspaceFolder;
 const vscode = __importStar(require("vscode"));
+const node_fs_1 = require("node:fs");
+const node_path_1 = __importDefault(require("node:path"));
 function getActiveWorkspaceFolder() {
     const activeDocument = vscode.window.activeTextEditor?.document;
     if (activeDocument) {
@@ -52,5 +60,20 @@ function isPattoDocument(document) {
         return false;
     }
     return document.uri.fsPath.includes(`${folder.uri.fsPath}`);
+}
+function isPattoWorkspaceFolder(folder) {
+    const root = folder.uri.fsPath;
+    return ((0, node_fs_1.existsSync)(node_path_1.default.join(root, '.patto', 'config.json')) ||
+        (0, node_fs_1.existsSync)(node_path_1.default.join(root, 'src', 'core', 'structures', 'BaseCommand.ts')));
+}
+function getPattoWorkspaceFolders() {
+    return (vscode.workspace.workspaceFolders ?? []).filter(isPattoWorkspaceFolder);
+}
+function getActivePattoWorkspaceFolder() {
+    const activeFolder = getActiveWorkspaceFolder();
+    if (activeFolder && isPattoWorkspaceFolder(activeFolder)) {
+        return activeFolder;
+    }
+    return getPattoWorkspaceFolders()[0] ?? null;
 }
 //# sourceMappingURL=workspace.js.map

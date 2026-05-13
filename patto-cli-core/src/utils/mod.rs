@@ -66,6 +66,112 @@ pub fn strip_line_comments(content: &str) -> String {
         .join("\n")
 }
 
+pub fn mask_typescript_non_code(content: &str) -> String {
+    let mut result = String::with_capacity(content.len());
+    let mut index = 0;
+    let mut in_line_comment = false;
+    let mut in_block_comment = false;
+    let mut in_string = None::<char>;
+    let mut escaped = false;
+
+    while index < content.len() {
+        let Some(character) = content[index..].chars().next() else {
+            break;
+        };
+
+        if in_line_comment {
+            if character == '\n' {
+                in_line_comment = false;
+                result.push('\n');
+            } else {
+                push_masked_character(&mut result, character);
+            }
+            index += character.len_utf8();
+            continue;
+        }
+
+        if in_block_comment {
+            if content[index..].starts_with("*/") {
+                in_block_comment = false;
+                result.push_str("  ");
+                index += 2;
+            } else {
+                push_masked_character(&mut result, character);
+                index += character.len_utf8();
+            }
+            continue;
+        }
+
+        if let Some(quote) = in_string {
+            if escaped {
+                escaped = false;
+            } else if character == '\\' {
+                escaped = true;
+            } else if character == quote {
+                in_string = None;
+            }
+            push_masked_character(&mut result, character);
+            index += character.len_utf8();
+            continue;
+        }
+
+        if content[index..].starts_with("//") {
+            in_line_comment = true;
+            result.push_str("  ");
+            index += 2;
+            continue;
+        }
+
+        if content[index..].starts_with("/*") {
+            in_block_comment = true;
+            result.push_str("  ");
+            index += 2;
+            continue;
+        }
+
+        if matches!(character, '"' | '\'' | '`') {
+            in_string = Some(character);
+            push_masked_character(&mut result, character);
+            index += character.len_utf8();
+            continue;
+        }
+
+        result.push(character);
+        index += character.len_utf8();
+    }
+
+    result
+}
+
+fn push_masked_character(result: &mut String, character: char) {
+    if character == '\n' {
+        result.push('\n');
+    } else {
+        for _ in 0..character.len_utf8() {
+            result.push(' ');
+        }
+    }
+}
+
+pub fn offset_to_line_column(content: &str, offset: usize) -> (u32, u32) {
+    let mut line = 1_u32;
+    let mut column = 1_u32;
+
+    for (index, character) in content.char_indices() {
+        if index >= offset {
+            return (line, column);
+        }
+        if character == '\n' {
+            line += 1;
+            column = 1;
+        } else {
+            column += 1;
+        }
+    }
+
+    (line, column)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,5 +195,26 @@ mod tests {
             diagnostics[0].code,
             DiagnosticCode::PATTO_PROJECT_ROOT_MISSING
         );
+    }
+
+    #[test]
+    fn mask_typescript_non_code_preserves_offsets_and_ignores_comments_strings() {
+        let content = concat!(
+            "// PluginScope.Specified\n",
+            "const text = \"PluginScope.Specified\";\n",
+            "/* Raíz PluginScope.Specified */\n",
+            "scope: PluginScope.Specified,\n",
+        );
+        let masked = mask_typescript_non_code(content);
+        let offset = masked
+            .find("PluginScope.Specified")
+            .expect("code occurrence should remain");
+        let original_offset = content
+            .rfind("PluginScope.Specified")
+            .expect("original code occurrence should exist");
+
+        assert_eq!(offset, original_offset);
+        assert_eq!(offset_to_line_column(content, offset), (4, 8));
+        assert_eq!(masked.matches("PluginScope.Specified").count(), 1);
     }
 }

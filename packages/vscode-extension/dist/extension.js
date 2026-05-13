@@ -32,14 +32,9 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = activate;
 exports.deactivate = deactivate;
-const node_fs_1 = require("node:fs");
-const node_path_1 = __importDefault(require("node:path"));
 const vscode = __importStar(require("vscode"));
 const cli_1 = require("./cli");
 const diagnostics_1 = require("./diagnostics");
@@ -52,6 +47,12 @@ function activate(context) {
     const output = vscode.window.createOutputChannel('Patto');
     const collection = vscode.languages.createDiagnosticCollection('patto');
     context.subscriptions.push(output, collection);
+    const pattoFolders = (0, workspace_1.getPattoWorkspaceFolders)();
+    if (pattoFolders.length === 0) {
+        output.appendLine('No Patto workspace detected. Patto extension is inactive for this workspace.');
+        return;
+    }
+    output.appendLine(`Patto workspace detected: ${pattoFolders.map((folder) => folder.name).join(', ')}`);
     context.subscriptions.push(vscode.commands.registerCommand('patto.check', () => runDiagnostics('check', collection, output, true)), vscode.commands.registerCommand('patto.lint', () => runDiagnostics('lint', collection, output, true)), vscode.commands.registerCommand('patto.showCliSetup', async () => {
         (0, cli_1.showCliSetupMessage)();
     }), vscode.workspace.onDidSaveTextDocument((document) => {
@@ -64,16 +65,13 @@ function activate(context) {
         }
     }), vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('patto')) {
-            scheduleDiagnostics(collection, output, 'config');
+            scheduleDiagnostics(collection, output, 'config', (0, workspace_1.getActivePattoWorkspaceFolder)() ?? undefined);
         }
     }));
     const watcher = vscode.workspace.createFileSystemWatcher('**/{package.json,tsconfig.json,.patto/config.json,src/**/*.ts}');
     context.subscriptions.push(watcher, watcher.onDidCreate((uri) => scheduleDiagnostics(collection, output, 'file-create', workspaceFolderForUri(uri))), watcher.onDidChange((uri) => scheduleDiagnostics(collection, output, 'file-change', workspaceFolderForUri(uri))), watcher.onDidDelete((uri) => scheduleDiagnostics(collection, output, 'file-delete', workspaceFolderForUri(uri))));
-    if (isPattoWorkspace()) {
-        output.appendLine('Patto workspace detected. Running initial check.');
-        if (vscode.workspace.getConfiguration('patto').get('runDiagnosticsOnOpen', true)) {
-            scheduleDiagnostics(collection, output, 'open');
-        }
+    if (vscode.workspace.getConfiguration('patto').get('runDiagnosticsOnOpen', true)) {
+        scheduleDiagnostics(collection, output, 'open', pattoFolders[0]);
     }
 }
 function deactivate() {
@@ -86,7 +84,11 @@ function scheduleDiagnostics(collection, output, reason, folder) {
         collection.clear();
         return;
     }
-    scheduledFolder = folder ?? scheduledFolder ?? (0, workspace_1.getActiveWorkspaceFolder)() ?? undefined;
+    scheduledFolder = folder ?? scheduledFolder ?? (0, workspace_1.getActivePattoWorkspaceFolder)() ?? undefined;
+    if (!scheduledFolder || !(0, workspace_1.isPattoWorkspaceFolder)(scheduledFolder)) {
+        collection.clear();
+        return;
+    }
     if (diagnosticTimer !== undefined) {
         clearTimeout(diagnosticTimer);
     }
@@ -102,9 +104,18 @@ function scheduleDiagnostics(collection, output, reason, folder) {
     }, debounceMs);
 }
 async function runDiagnostics(command, collection, output, revealOutput, folder) {
-    const workspaceFolder = folder ?? (0, workspace_1.getActiveWorkspaceFolder)();
+    const workspaceFolder = folder ?? (0, workspace_1.getActivePattoWorkspaceFolder)();
     if (!workspaceFolder) {
-        vscode.window.showWarningMessage('Abre un proyecto Patto para ejecutar diagnostics.');
+        if (revealOutput) {
+            vscode.window.showWarningMessage('Este workspace no parece ser un proyecto Patto.');
+        }
+        return;
+    }
+    if (!(0, workspace_1.isPattoWorkspaceFolder)(workspaceFolder)) {
+        collection.clear();
+        if (revealOutput) {
+            vscode.window.showWarningMessage('Patto esta inactivo: el workspace no es un proyecto Patto.');
+        }
         return;
     }
     if (isRunningDiagnostics) {
@@ -153,6 +164,10 @@ function shouldReactToDocument(document, setting) {
     if (document.uri.scheme !== 'file') {
         return false;
     }
+    const folder = workspaceFolderForDocument(document);
+    if (!folder || !(0, workspace_1.isPattoWorkspaceFolder)(folder)) {
+        return false;
+    }
     return (document.languageId === 'typescript' ||
         document.languageId === 'json' ||
         document.fileName.endsWith('.env') ||
@@ -164,13 +179,5 @@ function workspaceFolderForDocument(document) {
 }
 function workspaceFolderForUri(uri) {
     return vscode.workspace.getWorkspaceFolder(uri);
-}
-function isPattoWorkspace() {
-    const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-    return workspaceFolders.some((folder) => {
-        const root = folder.uri.fsPath;
-        return ((0, node_fs_1.existsSync)(node_path_1.default.join(root, '.patto', 'config.json')) ||
-            (0, node_fs_1.existsSync)(node_path_1.default.join(root, 'src', 'core', 'structures', 'BaseCommand.ts')));
-    });
 }
 //# sourceMappingURL=extension.js.map

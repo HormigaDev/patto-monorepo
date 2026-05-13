@@ -1,5 +1,6 @@
 {
     "name": "patto",
+    "private": true,
     "displayName": "Patto",
     "description": "Diagnostics and tooling for Patto Bot Template projects.",
     "version": "0.1.0",

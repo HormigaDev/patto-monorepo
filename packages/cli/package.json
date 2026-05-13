@@ -1,6 +1,6 @@
 {
     "name": "@patto/cli",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Official CLI for Patto Bot Template",
     "type": "module",
     "license": "AGPL-3.0-only",
@@ -20,6 +20,7 @@
         "test": "echo \"tests pending\""
     },
     "dependencies": {
+        "adm-zip": "^0.5.16",
         "cac": "^6.7.14",
         "chalk": "^5.3.0",
         "execa": "^9.0.0",
@@ -33,6 +34,7 @@
         "@patto/cli-core-win32-x64": "0.1.0"
     },
     "devDependencies": {
+        "@types/adm-zip": "^0.5.7",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^24.10.0",
         "@types/prompts": "^2.4.9",

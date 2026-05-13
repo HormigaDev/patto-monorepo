@@ -1,6 +1,6 @@
-import type { ParsedName } from './names.js';
-export type CommandKind = 'command' | 'subcommand' | 'subcommand-group';
-export type PluginScopeName = 'specified' | 'folder' | 'deep-folder';
+import type { ParsedName } from "./names.js";
+export type CommandKind = "command" | "subcommand" | "subcommand-group";
+export type PluginScopeName = "specified" | "folder" | "deep-folder";
 export interface CommandTemplateOptions {
     readonly description?: string;
     readonly category?: string;
@@ -29,6 +29,6 @@ export declare function pluginTemplate(classBase: string): string;
 export declare function pluginImportStatement(classBase: string, importPath: string): string;
 export declare function pluginCommandImportStatements(commands: string[] | undefined): string[];
 export declare function pluginRegistrationTemplate(options: PluginRegistrationOptions): string;
-export declare function pluginScopeEnum(scope: PluginScopeName): 'Specified' | 'Folder' | 'DeepFolder';
+export declare function pluginScopeEnum(scope: PluginScopeName): "Specified" | "Folder" | "DeepFolder";
 export declare function normalizePluginScope(scope: string | undefined, folder?: string): PluginScopeName;
 export declare function normalizeCategory(category: string | undefined): string;

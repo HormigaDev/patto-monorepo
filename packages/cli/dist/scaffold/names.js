@@ -4,14 +4,14 @@ export function parseScaffoldName(input, label) {
     if (raw.length === 0) {
         throw new Error(`El nombre de ${label} no puede estar vacío.`);
     }
-    if (raw.startsWith('/') || raw.includes('\\')) {
+    if (raw.startsWith("/") || raw.includes("\\")) {
         throw new Error(`El nombre de ${label} debe ser una ruta relativa con "/" si usa carpetas.`);
     }
-    const rawParts = raw.split('/').filter(Boolean);
+    const rawParts = raw.split("/").filter(Boolean);
     if (rawParts.length === 0) {
         throw new Error(`El nombre de ${label} no puede estar vacío.`);
     }
-    if (rawParts.some((part) => part === '.' || part === '..')) {
+    if (rawParts.some((part) => part === "." || part === "..")) {
         throw new Error(`El nombre de ${label} no puede contener "." ni "..".`);
     }
     const parts = rawParts.map((part) => normalizeSegment(part));
@@ -44,25 +44,25 @@ export function toPascalCase(value) {
         .split(/[-_]/g)
         .filter(Boolean)
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join('');
+        .join("");
 }
 export function commandClassNameFromPath(input) {
-    const parsed = parseScaffoldName(input, 'comando');
+    const parsed = parseScaffoldName(input, "comando");
     return `${parsed.classBase}Command`;
 }
 export function commandImportPath(input) {
-    const parsed = parseScaffoldName(input, 'comando');
-    return `@/commands/${[...parsed.dirs, `${parsed.fileBase}.command`].join('/')}`;
+    const parsed = parseScaffoldName(input, "comando");
+    return `@/commands/${[...parsed.dirs, `${parsed.fileBase}.command`].join("/")}`;
 }
 function normalizeSegment(value) {
     return value
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
-        .replace(/[_\s]+/g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
+        .replace(/[_\s]+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 }
 function validateDiscordName(name, label) {
     if (!/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/.test(name)) {

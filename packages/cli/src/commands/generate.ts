@@ -67,16 +67,27 @@ interface PluginOptions {
 }
 
 export function registerGenerateCommand(cli: CAC): void {
-    registerGenerateAlias(cli.command("generate <type> [name]", "Genera scaffolds Patto"));
+    registerGenerateAlias(
+        cli.command("generate <type> [name]", "Genera scaffolds Patto"),
+    );
     registerGenerateAlias(cli.command("g <type> [name]", "Alias de generate"));
-    registerGenerateAlias(cli.command("scaffold <type> [name]", "Alias de generate"));
+    registerGenerateAlias(
+        cli.command("scaffold <type> [name]", "Alias de generate"),
+    );
 }
 
 function registerGenerateAlias(command: Command): void {
     withGenerateOptions(command).action(runAction(dispatchGenerate));
 }
 
-function dispatchGenerate(type: string, name: string | undefined, options: CommandOptions & SubcommandOptions & DefinitionOptions & PluginOptions): void {
+function dispatchGenerate(
+    type: string,
+    name: string | undefined,
+    options: CommandOptions &
+        SubcommandOptions &
+        DefinitionOptions &
+        PluginOptions,
+): void {
     const scaffoldName = required(name, "nombre");
 
     switch (type) {
@@ -403,8 +414,14 @@ function withGenerateOptions(command: Command): Command {
         .option("-p, --parent <name>", "Nombre del comando padre")
         .option("-g, --group <name>", "Nombre del grupo")
         .option("--scope <scope>", "specified, folder o deep-folder")
-        .option("--folder <path>", "Carpeta de comandos para folder/deep-folder")
-        .option("--commands <paths>", "Lista separada por coma para scope specified")
+        .option(
+            "--folder <path>",
+            "Carpeta de comandos para folder/deep-folder",
+        )
+        .option(
+            "--commands <paths>",
+            "Lista separada por coma para scope specified",
+        )
         .option("--no-register", "No modifica src/config/plugins.config.ts");
 }
 

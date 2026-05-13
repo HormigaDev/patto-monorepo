@@ -1,6 +1,6 @@
-import { commandClassNameFromPath, commandImportPath, parseDiscordName, toPascalCase } from './names.js';
+import { commandClassNameFromPath, commandImportPath, parseDiscordName, toPascalCase, } from "./names.js";
 export function commandDefinitionTemplate(parsed, options) {
-    return `${decoratorImports('command', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("command", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Command({
     name: '${parsed.name}',
@@ -15,7 +15,7 @@ export function commandImplementationTemplate(parsed) {
     return `import { ${parsed.classBase}Definition } from '@/definitions/${[
         ...parsed.dirs,
         `${parsed.fileBase}.definition`,
-    ].join('/')}';
+    ].join("/")}';
 
 export class ${parsed.classBase}Command extends ${parsed.classBase}Definition {
     async run(): Promise<void> {
@@ -25,7 +25,7 @@ export class ${parsed.classBase}Command extends ${parsed.classBase}Definition {
 `;
 }
 export function commandSingleFileTemplate(parsed, options) {
-    return `${decoratorImports('command', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("command", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Command({
     name: '${parsed.name}',
@@ -39,9 +39,9 @@ export class ${parsed.classBase}Command extends BaseCommand {
 `;
 }
 export function subcommandTemplate(parsed, options) {
-    const parent = parseDiscordName(options.parent, 'comando padre');
+    const parent = parseDiscordName(options.parent, "comando padre");
     const className = `${toPascalCase(parent)}${parsed.classBase}Command`;
-    return `${decoratorImports('subcommand', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("subcommand", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Subcommand({
     parent: '${parent}',
@@ -56,10 +56,10 @@ export class ${className} extends BaseCommand {
 `;
 }
 export function subcommandGroupTemplate(parsed, options) {
-    const parent = parseDiscordName(options.parent, 'comando padre');
-    const group = parseDiscordName(options.group, 'grupo de subcomandos');
+    const parent = parseDiscordName(options.parent, "comando padre");
+    const group = parseDiscordName(options.group, "grupo de subcomandos");
     const className = `${toPascalCase(parent)}${toPascalCase(group)}${parsed.classBase}Command`;
-    return `${decoratorImports('subcommand-group', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("subcommand-group", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @SubcommandGroup({
     parent: '${parent}',
@@ -75,16 +75,16 @@ export class ${className} extends BaseCommand {
 `;
 }
 export function standaloneDefinitionTemplate(parsed, kind, options) {
-    if (kind === 'subcommand') {
-        const parent = parseDiscordName(requiredOption(options.parent, '--parent'), 'comando padre');
+    if (kind === "subcommand") {
+        const parent = parseDiscordName(requiredOption(options.parent, "--parent"), "comando padre");
         return subcommandTemplate(parsed, {
             ...options,
             parent,
         }).replace(`export class ${toPascalCase(parent)}${parsed.classBase}Command extends BaseCommand`, `export abstract class ${toPascalCase(parent)}${parsed.classBase}Definition extends BaseCommand`);
     }
-    if (kind === 'subcommand-group') {
-        const parent = parseDiscordName(requiredOption(options.parent, '--parent'), 'comando padre');
-        const group = parseDiscordName(requiredOption(options.group, '--group'), 'grupo de subcomandos');
+    if (kind === "subcommand-group") {
+        const parent = parseDiscordName(requiredOption(options.parent, "--parent"), "comando padre");
+        const group = parseDiscordName(requiredOption(options.group, "--group"), "grupo de subcomandos");
         return subcommandGroupTemplate(parsed, {
             ...options,
             parent,
@@ -135,62 +135,68 @@ export function pluginCommandImportStatements(commands) {
 }
 export function pluginRegistrationTemplate(options) {
     const scope = pluginScopeEnum(options.scope);
-    const commandsLine = options.scope === 'specified'
-        ? `    commands: [${(options.commands ?? []).map(commandClassNameFromPath).join(', ')}],\n`
-        : '';
+    const commandsLine = options.scope === "specified"
+        ? `    commands: [${(options.commands ?? []).map(commandClassNameFromPath).join(", ")}],\n`
+        : "";
     return `PluginRegistry.register({
     plugin: new ${options.classBase}Plugin(),
     scope: PluginScope.${scope},
-    folderPath: '${quote(options.folder ?? '')}',
+    folderPath: '${quote(options.folder ?? "")}',
 ${commandsLine}});`;
 }
 export function pluginScopeEnum(scope) {
     switch (scope) {
-        case 'specified':
-            return 'Specified';
-        case 'folder':
-            return 'Folder';
-        case 'deep-folder':
-            return 'DeepFolder';
+        case "specified":
+            return "Specified";
+        case "folder":
+            return "Folder";
+        case "deep-folder":
+            return "DeepFolder";
     }
 }
 export function normalizePluginScope(scope, folder) {
     if (scope === undefined) {
-        return folder ? 'folder' : 'deep-folder';
+        return folder ? "folder" : "deep-folder";
     }
-    if (scope === 'specified' || scope === 'folder' || scope === 'deep-folder') {
+    if (scope === "specified" ||
+        scope === "folder" ||
+        scope === "deep-folder") {
         return scope;
     }
-    throw new Error('El scope del plugin debe ser specified, folder o deep-folder.');
+    throw new Error("El scope del plugin debe ser specified, folder o deep-folder.");
 }
 export function normalizeCategory(category) {
-    const value = category?.trim().toLowerCase() || 'other';
+    const value = category?.trim().toLowerCase() || "other";
     const map = {
-        economy: 'Economy',
-        info: 'Info',
-        moderation: 'Moderation',
-        other: 'Other',
-        settings: 'Settings',
-        utils: 'Utils',
+        economy: "Economy",
+        info: "Info",
+        moderation: "Moderation",
+        other: "Other",
+        settings: "Settings",
+        utils: "Utils",
     };
     const normalized = map[value];
     if (normalized === undefined) {
-        throw new Error('La categoria debe ser info, utils, moderation, settings, economy u other.');
+        throw new Error("La categoria debe ser info, utils, moderation, settings, economy u other.");
     }
     return normalized;
 }
 function decoratorImports(kind, category) {
-    const categoryImport = category === undefined ? '' : "import { Category } from '@/utils/CommandCategories';\n";
-    if (kind === 'subcommand') {
+    const categoryImport = category === undefined
+        ? ""
+        : "import { Category } from '@/utils/CommandCategories';\n";
+    if (kind === "subcommand") {
         return `import { Subcommand } from '@/core/decorators/subcommand.decorator';\n${categoryImport}`;
     }
-    if (kind === 'subcommand-group') {
+    if (kind === "subcommand-group") {
         return `import { SubcommandGroup } from '@/core/decorators/subcommand-group.decorator';\n${categoryImport}`;
     }
     return `import { Command } from '@/core/decorators/command.decorator';\n${categoryImport}`;
 }
 function categoryLine(category) {
-    return category === undefined ? '' : `    category: Category.${normalizeCategory(category)},\n`;
+    return category === undefined
+        ? ""
+        : `    category: Category.${normalizeCategory(category)},\n`;
 }
 function requiredOption(value, option) {
     if (!value) {
@@ -199,6 +205,6 @@ function requiredOption(value, option) {
     return value;
 }
 function quote(value) {
-    return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }
 //# sourceMappingURL=templates.js.map

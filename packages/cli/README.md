@@ -1,117 +1,149 @@
 # @patto/cli
 
-Official CLI for Patto Bot Template projects.
+CLI oficial para proyectos de plantillas de [Patto Bot](https://github.com/HormigaDev/patto-bot-template).
 
-`@patto/cli` is the user-facing wrapper for Patto tooling. It handles
-scaffolding in TypeScript/Node and delegates heavy project analysis to the
-native Rust core distributed through platform-specific optional dependencies.
+`@patto/cli` es el wrapper orientado al usuario para las herramientas de Patto. Maneja
+la generación de estructuras en TypeScript/Node y delega el análisis pesado del proyecto al
+núcleo nativo en Rust distribuido mediante dependencias opcionales específicas de cada plataforma.
 
-Everything in this package is licensed under `AGPL-3.0-only`.
+Todo el contenido de este paquete está licenciado bajo `AGPL-3.0-only`.
 
-## Installation
+## Instalación
 
 ```bash
 pnpm add -g @patto/cli
 ```
 
-or:
+o:
 
 ```bash
 npm install -g @patto/cli
 ```
 
-After installation:
+Después de la instalación:
 
 ```bash
 patto --help
 ```
 
-## Platform Support
+## Soporte de plataformas
 
-`@patto/cli` installs the native core as optional dependencies. Supported
-platforms today:
+`@patto/cli` instala el núcleo nativo como dependencias opcionales. Plataformas compatibles actualmente:
 
 - Linux x64: `@patto/cli-core-linux-x64`
 - Linux arm64: `@patto/cli-core-linux-arm64`
 - Windows x64: `@patto/cli-core-win32-x64`
 
-If your platform is not supported yet, the CLI exits with a clear error telling
-you that no compatible native binary is available.
+Si tu plataforma aún no es compatible, la CLI finalizará mostrando un error claro indicando
+que no hay un binario nativo compatible disponible.
 
-## Project Root
+## Inicialización de proyectos
 
-Commands that analyze a bot project accept `--root`:
+### init
+
+Crea un nuevo proyecto Patto Bot Template clonando el repositorio oficial.
+
+```bash
+# Modo interactivo (pregunta nombre y descripción)
+patto init
+
+# Con nombre como argumento posicional
+patto init mi-bot-discord
+
+# Totalmente no interactivo (listo para scripts)
+patto init --name "Mi Bot" --description "Un bot de Discord"
+
+# Combinado
+patto init mi-bot --description "Un bot genial"
+```
+
+El comando:
+
+1. Clona el repositorio via `git clone` si Git está disponible
+2. Si Git no está instalado, descarga la última release como ZIP desde GitHub
+3. Limpia el historial de git del template
+4. Actualiza `package.json` con el nombre (kebab-case) y descripción
+5. Inicializa un nuevo repositorio Git con commit inicial
+
+La carpeta se crea en el directorio actual con el nombre tal como se ingresó (sin espacios).
+El `name` en `package.json` se convierte automáticamente a kebab-case.
+
+---
+
+## Raíz del proyecto
+
+Los comandos que analizan un proyecto de bot aceptan `--root`:
 
 ```bash
 patto check --root /path/to/patto-bot
 ```
 
-If omitted, the current working directory is used.
+Si se omite, se utilizará el directorio de trabajo actual.
 
-## Scaffolding
+## Generación de estructuras
 
-Scaffolding is handled directly by the Node wrapper.
+La generación de estructuras es manejada directamente por el wrapper de Node.
 
-### Command
+### Comando
 
-By default, command scaffolding creates a split command:
+Por defecto, la generación de comandos crea un comando dividido:
 
 ```bash
 patto generate command info/ping
 ```
 
-Creates:
+Crea:
 
 ```text
 src/definitions/info/ping.definition.ts
 src/commands/info/ping.command.ts
 ```
 
-Create a single command file instead:
+Para crear un único archivo de comando:
 
 ```bash
 patto generate command info/ping --single-file
 ```
 
-`--unified` is an alias of `--single-file`.
+`--unified` es un alias de `--single-file`.
 
-### Subcommand
+### Subcomando
 
 ```bash
 patto generate subcommand get --parent config
 ```
 
-Creates:
+Crea:
 
 ```text
 src/commands/config/get.command.ts
 ```
 
-### Subcommand Group
+### Grupo de subcomandos
 
 ```bash
 patto generate subcommand-group set --parent server --group config
 ```
 
-Creates:
+Crea:
 
 ```text
 src/commands/server/config/set.command.ts
 ```
 
-### Definition
+### Definición
 
 ```bash
 patto generate definition help
 ```
 
-For subcommand definitions:
+Para definiciones de subcomandos:
 
 ```bash
 patto generate definition get --kind subcommand --parent config
 ```
 
-For subcommand-group definitions:
+Para definiciones de grupos de subcomandos:
 
 ```bash
 patto generate definition set --kind subcommand-group --parent server --group config
@@ -123,46 +155,46 @@ patto generate definition set --kind subcommand-group --parent server --group co
 patto generate plugin audit-log --scope deep-folder --folder moderation
 ```
 
-Creates:
+Crea:
 
 ```text
 src/plugins/audit-log.plugin.ts
 ```
 
-and registers it in:
+y lo registra en:
 
 ```text
 src/config/plugins.config.ts
 ```
 
-For `PluginScope.Specified`, provide target commands:
+Para `PluginScope.Specified`, proporciona los comandos objetivo:
 
 ```bash
 patto generate plugin review-gate --scope specified --commands info/about,admin/ban
 ```
 
-Skip automatic registration:
+Omitir el registro automático:
 
 ```bash
 patto generate plugin audit-log --no-register
 ```
 
-### Generate Aliases
+### Alias de generación
 
-All generate commands can use aliases:
+Todos los comandos de generación pueden usar alias:
 
 ```bash
 patto g command ping
 patto scaffold command ping
 ```
 
-## Analysis Commands
+## Comandos de análisis
 
-These commands call the native Rust core.
+Estos comandos llaman al núcleo nativo en Rust.
 
 ### scan
 
-Indexes the project and writes `.patto/index.json`.
+Indexa el proyecto y escribe `.patto/index.json`.
 
 ```bash
 patto scan --root /path/to/bot
@@ -170,8 +202,7 @@ patto scan --root /path/to/bot
 
 ### lint
 
-Runs Patto static rules over commands, definitions, plugins and project
-conventions.
+Ejecuta las reglas estáticas de Patto sobre comandos, definiciones, plugins y convenciones del proyecto.
 
 ```bash
 patto lint --root /path/to/bot
@@ -179,8 +210,8 @@ patto lint --root /path/to/bot
 
 ### doctor
 
-Checks project health: runtime, dependencies, scripts, env files, tsconfig,
-Patto config, sharding/Redis and build output.
+Verifica la salud del proyecto: runtime, dependencias, scripts, archivos env, tsconfig,
+configuración de Patto, sharding/Redis y salida de compilación.
 
 ```bash
 patto doctor --root /path/to/bot
@@ -188,16 +219,15 @@ patto doctor --root /path/to/bot
 
 ### check
 
-Runs `scan + lint + doctor`. This is the recommended command for CI and editor
-integrations.
+Ejecuta `scan + lint + doctor`. Este es el comando recomendado para CI e integraciones de editores.
 
 ```bash
 patto check --root /path/to/bot
 ```
 
-## Human Output
+## Salida legible para humanos
 
-By default, diagnostics are rendered for humans:
+Por defecto, los diagnósticos se muestran en un formato legible para humanos:
 
 ```text
 src/config/plugins.config.ts:45:15 WARNING plugin-specified-commands
@@ -207,101 +237,101 @@ src/config/plugins.config.ts:45:15 WARNING plugin-specified-commands
   hint: Agrega commands: [MiCommand] cuando uses PluginScope.Specified.
 ```
 
-Severity colors:
+Colores de severidad:
 
-- error: red
-- warning: yellow/orange
-- info: blue
+- error: rojo
+- warning: amarillo/naranja
+- info: azul
 
-## JSON Output
+## Salida JSON
 
-Use `--json` to print the raw JSON returned by the Rust core:
+Usa `--json` para imprimir el JSON sin procesar devuelto por el núcleo Rust:
 
 ```bash
 patto check --root /path/to/bot --json
 ```
 
-Diagnostics include:
+Los diagnósticos incluyen:
 
 ```json
 {
-  "level": "warning",
-  "code": "plugin-specified-commands",
-  "message": "PluginScope.Specified no tiene una lista de commands válida.",
-  "file": "src/config/plugins.config.ts",
-  "line": 45,
-  "column": 15,
-  "hint": "Agrega commands: [MiCommand] cuando uses PluginScope.Specified."
+    "level": "warning",
+    "code": "plugin-specified-commands",
+    "message": "PluginScope.Specified no tiene una lista de commands válida.",
+    "file": "src/config/plugins.config.ts",
+    "line": 45,
+    "column": 15,
+    "hint": "Agrega commands: [MiCommand] cuando uses PluginScope.Specified."
 }
 ```
 
-## Stdin API
+## API por stdin
 
-The CLI exposes a structured API for extensions and other tools:
+La CLI expone una API estructurada para extensiones y otras herramientas:
 
 ```bash
 printf '{"command":"check","root":"/path/to/bot","lang":"es"}' | patto core --stdin
 ```
 
-Response shape:
+Formato de respuesta:
 
 ```json
 {
-  "ok": true,
-  "command": "check",
-  "exitCode": 0,
-  "stderr": "",
-  "output": {},
-  "diagnostics": []
+    "ok": true,
+    "command": "check",
+    "exitCode": 0,
+    "stderr": "",
+    "output": {},
+    "diagnostics": []
 }
 ```
 
-Supported `command` values:
+Valores compatibles para `command`:
 
 - `scan`
 - `lint`
 - `doctor`
 - `check`
 
-## Configuration
+## Configuración
 
-Patto projects use:
+Los proyectos Patto utilizan:
 
 ```text
 .patto/config.json
 ```
 
-Minimum config:
+Configuración mínima:
 
 ```json
 {
-  "schemaVersion": 1,
-  "lang": "es"
+    "schemaVersion": 1,
+    "lang": "es"
 }
 ```
 
-Lint rules can be configured with severities:
+Las reglas de lint pueden configurarse con niveles de severidad:
 
 ```json
 {
-  "lint-rules": {
-    "duplicate-commands": "error",
-    "invalid-command-names": "warning",
-    "ghost-parent-mix": "off"
-  }
+    "lint-rules": {
+        "duplicate-commands": "error",
+        "invalid-command-names": "warning",
+        "ghost-parent-mix": "off"
+    }
 }
 ```
 
-Supported severities:
+Niveles de severidad compatibles:
 
 - `off`
 - `info`
 - `warning`
 - `error`
 
-## Development
+## Desarrollo
 
-From the monorepo root:
+Desde la raíz del monorepo:
 
 ```bash
 pnpm install
@@ -309,15 +339,15 @@ pnpm --filter @patto/cli build
 pnpm --filter @patto/cli dev -- --help
 ```
 
-Build native binaries:
+Compilar binarios nativos:
 
 ```bash
 pnpm build:core
 ```
 
-## License
+## Licencia
 
-`@patto/cli` is licensed under `AGPL-3.0-only`.
+`@patto/cli` está licenciado bajo `AGPL-3.0-only`.
 
-The native core packages consumed by this CLI are also licensed under
+Los paquetes del núcleo nativo consumidos por esta CLI también están licenciados bajo
 `AGPL-3.0-only`.

@@ -1,8 +1,13 @@
-import type { ParsedName } from './names.js';
-import { commandClassNameFromPath, commandImportPath, parseDiscordName, toPascalCase } from './names.js';
+import type { ParsedName } from "./names.js";
+import {
+    commandClassNameFromPath,
+    commandImportPath,
+    parseDiscordName,
+    toPascalCase,
+} from "./names.js";
 
-export type CommandKind = 'command' | 'subcommand' | 'subcommand-group';
-export type PluginScopeName = 'specified' | 'folder' | 'deep-folder';
+export type CommandKind = "command" | "subcommand" | "subcommand-group";
+export type PluginScopeName = "specified" | "folder" | "deep-folder";
 
 export interface CommandTemplateOptions {
     readonly description?: string;
@@ -30,7 +35,7 @@ export function commandDefinitionTemplate(
     parsed: ParsedName,
     options: CommandTemplateOptions,
 ): string {
-    return `${decoratorImports('command', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("command", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Command({
     name: '${parsed.name}',
@@ -46,7 +51,7 @@ export function commandImplementationTemplate(parsed: ParsedName): string {
     return `import { ${parsed.classBase}Definition } from '@/definitions/${[
         ...parsed.dirs,
         `${parsed.fileBase}.definition`,
-    ].join('/')}';
+    ].join("/")}';
 
 export class ${parsed.classBase}Command extends ${parsed.classBase}Definition {
     async run(): Promise<void> {
@@ -60,7 +65,7 @@ export function commandSingleFileTemplate(
     parsed: ParsedName,
     options: CommandTemplateOptions,
 ): string {
-    return `${decoratorImports('command', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("command", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Command({
     name: '${parsed.name}',
@@ -78,10 +83,10 @@ export function subcommandTemplate(
     parsed: ParsedName,
     options: SubcommandTemplateOptions,
 ): string {
-    const parent = parseDiscordName(options.parent, 'comando padre');
+    const parent = parseDiscordName(options.parent, "comando padre");
     const className = `${toPascalCase(parent)}${parsed.classBase}Command`;
 
-    return `${decoratorImports('subcommand', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("subcommand", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @Subcommand({
     parent: '${parent}',
@@ -100,11 +105,11 @@ export function subcommandGroupTemplate(
     parsed: ParsedName,
     options: SubcommandGroupTemplateOptions,
 ): string {
-    const parent = parseDiscordName(options.parent, 'comando padre');
-    const group = parseDiscordName(options.group, 'grupo de subcomandos');
+    const parent = parseDiscordName(options.parent, "comando padre");
+    const group = parseDiscordName(options.group, "grupo de subcomandos");
     const className = `${toPascalCase(parent)}${toPascalCase(group)}${parsed.classBase}Command`;
 
-    return `${decoratorImports('subcommand-group', options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
+    return `${decoratorImports("subcommand-group", options.category)}import { BaseCommand } from '@/core/structures/BaseCommand';
 
 @SubcommandGroup({
     parent: '${parent}',
@@ -123,10 +128,14 @@ export class ${className} extends BaseCommand {
 export function standaloneDefinitionTemplate(
     parsed: ParsedName,
     kind: CommandKind,
-    options: CommandTemplateOptions & Partial<SubcommandTemplateOptions & SubcommandGroupTemplateOptions>,
+    options: CommandTemplateOptions &
+        Partial<SubcommandTemplateOptions & SubcommandGroupTemplateOptions>,
 ): string {
-    if (kind === 'subcommand') {
-        const parent = parseDiscordName(requiredOption(options.parent, '--parent'), 'comando padre');
+    if (kind === "subcommand") {
+        const parent = parseDiscordName(
+            requiredOption(options.parent, "--parent"),
+            "comando padre",
+        );
 
         return subcommandTemplate(parsed, {
             ...options,
@@ -137,9 +146,15 @@ export function standaloneDefinitionTemplate(
         );
     }
 
-    if (kind === 'subcommand-group') {
-        const parent = parseDiscordName(requiredOption(options.parent, '--parent'), 'comando padre');
-        const group = parseDiscordName(requiredOption(options.group, '--group'), 'grupo de subcomandos');
+    if (kind === "subcommand-group") {
+        const parent = parseDiscordName(
+            requiredOption(options.parent, "--parent"),
+            "comando padre",
+        );
+        const group = parseDiscordName(
+            requiredOption(options.group, "--group"),
+            "grupo de subcomandos",
+        );
 
         return subcommandGroupTemplate(parsed, {
             ...options,
@@ -186,82 +201,108 @@ export class ${classBase}Plugin extends BasePlugin {
 `;
 }
 
-export function pluginImportStatement(classBase: string, importPath: string): string {
+export function pluginImportStatement(
+    classBase: string,
+    importPath: string,
+): string {
     return `import { ${classBase}Plugin } from '${importPath}';`;
 }
 
-export function pluginCommandImportStatements(commands: string[] | undefined): string[] {
+export function pluginCommandImportStatements(
+    commands: string[] | undefined,
+): string[] {
     return (commands ?? []).map((commandPath) => {
         const className = commandClassNameFromPath(commandPath);
         return `import { ${className} } from '${commandImportPath(commandPath)}';`;
     });
 }
 
-export function pluginRegistrationTemplate(options: PluginRegistrationOptions): string {
+export function pluginRegistrationTemplate(
+    options: PluginRegistrationOptions,
+): string {
     const scope = pluginScopeEnum(options.scope);
     const commandsLine =
-        options.scope === 'specified'
-            ? `    commands: [${(options.commands ?? []).map(commandClassNameFromPath).join(', ')}],\n`
-            : '';
+        options.scope === "specified"
+            ? `    commands: [${(options.commands ?? []).map(commandClassNameFromPath).join(", ")}],\n`
+            : "";
 
     return `PluginRegistry.register({
     plugin: new ${options.classBase}Plugin(),
     scope: PluginScope.${scope},
-    folderPath: '${quote(options.folder ?? '')}',
+    folderPath: '${quote(options.folder ?? "")}',
 ${commandsLine}});`;
 }
 
-export function pluginScopeEnum(scope: PluginScopeName): 'Specified' | 'Folder' | 'DeepFolder' {
+export function pluginScopeEnum(
+    scope: PluginScopeName,
+): "Specified" | "Folder" | "DeepFolder" {
     switch (scope) {
-        case 'specified':
-            return 'Specified';
-        case 'folder':
-            return 'Folder';
-        case 'deep-folder':
-            return 'DeepFolder';
+        case "specified":
+            return "Specified";
+        case "folder":
+            return "Folder";
+        case "deep-folder":
+            return "DeepFolder";
     }
 }
 
-export function normalizePluginScope(scope: string | undefined, folder?: string): PluginScopeName {
+export function normalizePluginScope(
+    scope: string | undefined,
+    folder?: string,
+): PluginScopeName {
     if (scope === undefined) {
-        return folder ? 'folder' : 'deep-folder';
+        return folder ? "folder" : "deep-folder";
     }
 
-    if (scope === 'specified' || scope === 'folder' || scope === 'deep-folder') {
+    if (
+        scope === "specified" ||
+        scope === "folder" ||
+        scope === "deep-folder"
+    ) {
         return scope;
     }
 
-    throw new Error('El scope del plugin debe ser specified, folder o deep-folder.');
+    throw new Error(
+        "El scope del plugin debe ser specified, folder o deep-folder.",
+    );
 }
 
 export function normalizeCategory(category: string | undefined): string {
-    const value = category?.trim().toLowerCase() || 'other';
+    const value = category?.trim().toLowerCase() || "other";
     const map: Record<string, string> = {
-        economy: 'Economy',
-        info: 'Info',
-        moderation: 'Moderation',
-        other: 'Other',
-        settings: 'Settings',
-        utils: 'Utils',
+        economy: "Economy",
+        info: "Info",
+        moderation: "Moderation",
+        other: "Other",
+        settings: "Settings",
+        utils: "Utils",
     };
 
     const normalized = map[value];
 
     if (normalized === undefined) {
-        throw new Error('La categoria debe ser info, utils, moderation, settings, economy u other.');
+        throw new Error(
+            "La categoria debe ser info, utils, moderation, settings, economy u other.",
+        );
     }
 
     return normalized;
 }
 
-function decoratorImports(kind: CommandKind, category: string | undefined): string {
-    const categoryImport = category === undefined ? '' : "import { Category } from '@/utils/CommandCategories';\n";
+function decoratorImports(
+    kind: CommandKind,
+    category: string | undefined,
+): string {
+    const categoryImport =
+        category === undefined
+            ? ""
+            : "import { Category } from '@/utils/CommandCategories';\n";
 
-    if (kind === 'subcommand') {
+    if (kind === "subcommand") {
         return `import { Subcommand } from '@/core/decorators/subcommand.decorator';\n${categoryImport}`;
     }
 
-    if (kind === 'subcommand-group') {
+    if (kind === "subcommand-group") {
         return `import { SubcommandGroup } from '@/core/decorators/subcommand-group.decorator';\n${categoryImport}`;
     }
 
@@ -269,7 +310,9 @@ function decoratorImports(kind: CommandKind, category: string | undefined): stri
 }
 
 function categoryLine(category: string | undefined): string {
-    return category === undefined ? '' : `    category: Category.${normalizeCategory(category)},\n`;
+    return category === undefined
+        ? ""
+        : `    category: Category.${normalizeCategory(category)},\n`;
 }
 
 function requiredOption(value: string | undefined, option: string): string {
@@ -281,5 +324,5 @@ function requiredOption(value: string | undefined, option: string): string {
 }
 
 function quote(value: string): string {
-    return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
 }

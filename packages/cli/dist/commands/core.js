@@ -1,27 +1,27 @@
-import path from 'node:path';
-import { runCore } from '../core/run.js';
-import { readCoreRequest } from '../core/stdin.js';
-import { diagnosticsFromOutput, printHumanOutput } from '../output/diagnostics.js';
+import path from "node:path";
+import { runCore } from "../core/run.js";
+import { readCoreRequest } from "../core/stdin.js";
+import { diagnosticsFromOutput, printHumanOutput, } from "../output/diagnostics.js";
 export function registerCoreCommands(cli) {
-    registerCoreCommand(cli.command('scan', 'Indexa el proyecto Patto'), 'scan');
-    registerCoreCommand(cli.command('lint', 'Ejecuta reglas estaticas de Patto'), 'lint');
-    registerCoreCommand(cli.command('doctor', 'Revisa salud del entorno Patto'), 'doctor');
-    registerCoreCommand(cli.command('check', 'Ejecuta scan + lint + doctor'), 'check');
-    cli.command('core', 'API JSON por stdin para extensiones')
-        .option('--stdin', 'Lee un request JSON desde stdin')
+    registerCoreCommand(cli.command("scan", "Indexa el proyecto Patto"), "scan");
+    registerCoreCommand(cli.command("lint", "Ejecuta reglas estaticas de Patto"), "lint");
+    registerCoreCommand(cli.command("doctor", "Revisa salud del entorno Patto"), "doctor");
+    registerCoreCommand(cli.command("check", "Ejecuta scan + lint + doctor"), "check");
+    cli.command("core", "API JSON por stdin para extensiones")
+        .option("--stdin", "Lee un request JSON desde stdin")
         .action(async (options) => {
         if (!options.stdin) {
-            throw new Error('Usa patto core --stdin.');
+            throw new Error("Usa patto core --stdin.");
         }
         await runFromStdin();
     });
 }
 function registerCoreCommand(command, coreCommand) {
     command
-        .option('--root <path>', 'Raiz del proyecto Patto')
-        .option('--lang <lang>', 'Idioma del core: auto o es')
-        .option('--json', 'Imprime la salida JSON cruda del core')
-        .option('--stdin', 'Lee root/lang desde un request JSON en stdin')
+        .option("--root <path>", "Raiz del proyecto Patto")
+        .option("--lang <lang>", "Idioma del core: auto o es")
+        .option("--json", "Imprime la salida JSON cruda del core")
+        .option("--stdin", "Lee root/lang desde un request JSON en stdin")
         .action(async (options) => {
         if (options.stdin) {
             await runFromStdin(coreCommand);
@@ -39,8 +39,8 @@ async function runDirect(command, options) {
     });
     if (options.json) {
         process.stdout.write(result.stdout);
-        if (!result.stdout.endsWith('\n')) {
-            process.stdout.write('\n');
+        if (!result.stdout.endsWith("\n")) {
+            process.stdout.write("\n");
         }
     }
     else {
@@ -67,9 +67,11 @@ async function runFromStdin(defaultCommand) {
 }
 export function writeStructuredError(error) {
     const message = error instanceof Error ? error.message : String(error);
-    const code = error instanceof Error && 'code' in error && typeof error.code === 'string'
+    const code = error instanceof Error &&
+        "code" in error &&
+        typeof error.code === "string"
         ? error.code
-        : 'patto_cli_error';
+        : "patto_cli_error";
     const payload = {
         ok: false,
         error: {

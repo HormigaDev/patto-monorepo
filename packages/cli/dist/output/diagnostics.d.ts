@@ -1,4 +1,4 @@
-import type { CoreDiagnostic, CoreOutput } from '../core/types.js';
+import type { CoreDiagnostic, CoreOutput } from "../core/types.js";
 interface RenderOptions {
     readonly root: string;
     readonly command: string;

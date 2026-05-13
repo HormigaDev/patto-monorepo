@@ -1,6 +1,6 @@
-import chalk from 'chalk';
-import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
+import chalk from "chalk";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 export function printHumanOutput(output, options) {
     const diagnostics = output?.diagnostics ?? [];
     if (diagnostics.length === 0) {
@@ -28,26 +28,26 @@ function printDiagnostic(diagnostic, root) {
     if (diagnostic.hint) {
         console.log(chalk.dim(`  hint: ${diagnostic.hint}`));
     }
-    console.log('');
+    console.log("");
 }
 function printSourceFrame(root, diagnostic) {
-    const filePath = path.resolve(root, diagnostic.file ?? '');
+    const filePath = path.resolve(root, diagnostic.file ?? "");
     if (!existsSync(filePath)) {
         return;
     }
-    const lines = readFileSync(filePath, 'utf8').split(/\r?\n/);
+    const lines = readFileSync(filePath, "utf8").split(/\r?\n/);
     const lineNumber = diagnostic.line ?? 1;
     const sourceLine = lines[lineNumber - 1];
     if (sourceLine === undefined) {
         return;
     }
-    const gutter = String(lineNumber).padStart(4, ' ');
+    const gutter = String(lineNumber).padStart(4, " ");
     const column = Math.max(1, diagnostic.column ?? 1);
     const underlineStart = Math.max(0, column - 1);
     const underlineWidth = inferUnderlineWidth(sourceLine, underlineStart);
-    const underline = `${' '.repeat(underlineStart)}${'^'.repeat(underlineWidth)}`;
+    const underline = `${" ".repeat(underlineStart)}${"^".repeat(underlineWidth)}`;
     console.log(chalk.dim(`${gutter} | `) + sourceLine);
-    console.log(chalk.dim('     | ') + colorForLevel(diagnostic.level)(underline));
+    console.log(chalk.dim("     | ") + colorForLevel(diagnostic.level)(underline));
 }
 function inferUnderlineWidth(sourceLine, start) {
     const rest = sourceLine.slice(start);
@@ -60,7 +60,7 @@ function inferUnderlineWidth(sourceLine, start) {
 }
 function formatLocation(diagnostic, root) {
     if (!diagnostic.file) {
-        return chalk.bold('<proyecto>');
+        return chalk.bold("<proyecto>");
     }
     const file = path.relative(process.cwd(), path.resolve(root, diagnostic.file));
     const line = diagnostic.line ?? 1;
@@ -74,10 +74,10 @@ function printSummary(output) {
     console.log(chalk.dim(`summary: ${JSON.stringify(output.summary)}`));
 }
 function colorForLevel(level) {
-    if (level === 'error') {
+    if (level === "error") {
         return chalk.red;
     }
-    if (level === 'warning') {
+    if (level === "warning") {
         return chalk.yellow;
     }
     return chalk.blue;

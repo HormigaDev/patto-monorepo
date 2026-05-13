@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-import { cac } from 'cac';
-import chalk from 'chalk';
-import { registerCoreCommands, writeStructuredError } from './commands/core.js';
-import { registerGenerateCommand } from './commands/generate.js';
+import { cac } from "cac";
+import chalk from "chalk";
+import { registerCoreCommands, writeStructuredError } from "./commands/core.js";
+import { registerGenerateCommand } from "./commands/generate.js";
+import { registerInitCommand } from "./commands/init.js";
 
-const cli = cac('patto');
+const cli = cac("patto");
 
-cli.version('0.1.0');
+cli.version("0.1.0");
 cli.help();
 
+registerInitCommand(cli);
 registerGenerateCommand(cli);
 registerCoreCommands(cli);
 
@@ -21,10 +23,12 @@ try {
         await cli.runMatchedCommand();
     }
 } catch (error) {
-    if (process.argv.includes('--stdin')) {
+    if (process.argv.includes("--stdin")) {
         writeStructuredError(error);
     } else {
-        console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+        console.error(
+            chalk.red(error instanceof Error ? error.message : String(error)),
+        );
     }
 
     process.exitCode = 1;

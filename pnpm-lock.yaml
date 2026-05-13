@@ -10,6 +10,9 @@ importers:
 
   packages/cli:
     dependencies:
+      adm-zip:
+        specifier: ^0.5.16
+        version: 0.5.17
       cac:
         specifier: ^6.7.14
         version: 6.7.14
@@ -29,6 +32,9 @@ importers:
         specifier: ^2.4.2
         version: 2.4.2
     devDependencies:
+      '@types/adm-zip':
+        specifier: ^0.5.7
+        version: 0.5.8
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -46,14 +52,14 @@ importers:
         version: 6.0.3
     optionalDependencies:
       '@patto/cli-core-linux-arm64':
-        specifier: workspace:*
-        version: link:../cli-core-linux-arm64
+        specifier: 0.1.0
+        version: 0.1.0
       '@patto/cli-core-linux-x64':
-        specifier: workspace:*
-        version: link:../cli-core-linux-x64
+        specifier: 0.1.0
+        version: 0.1.0
       '@patto/cli-core-win32-x64':
-        specifier: workspace:*
-        version: link:../cli-core-win32-x64
+        specifier: 0.1.0
+        version: 0.1.0
 
   packages/cli-core-linux-arm64: {}
 
@@ -308,6 +314,24 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
+  '@patto/cli-core-linux-arm64@0.1.0':
+    resolution: {integrity: sha512-4g1erifXmp9Y9hh0fh/F0vKYUUDJkvTXCcChYOBjdpfGyVyn9YKtx/trDGiACub+C033dp3mBDqgiOnUAmJ2cA==}
+    cpu: [arm64]
+    os: [linux]
+    hasBin: true
+
+  '@patto/cli-core-linux-x64@0.1.0':
+    resolution: {integrity: sha512-+PjOAqICt0E+PhZL4vLlo2OyvGrhq7ik70IqYzgAf4T/TTciCpMoI0di/6s71d6C2CuAkZxC6uYhavquZF8SEw==}
+    cpu: [x64]
+    os: [linux]
+    hasBin: true
+
+  '@patto/cli-core-win32-x64@0.1.0':
+    resolution: {integrity: sha512-4C4aUK69i5ioBtuDK6hGpbS9J+Gw9R8zQuj+4ulPwpJOCSpNwtTtFaP+rCmuJEBrgTHJuN2fuu1Qtcvz6EYPgw==}
+    cpu: [x64]
+    os: [win32]
+    hasBin: true
+
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
 
@@ -378,6 +402,9 @@ packages:
 
   '@textlint/types@15.6.1':
     resolution: {integrity: sha512-dRdyTAMRaqcU5eHpJWgTq9kcKGErs+cVVFwNTP3gUAFDJxEVxdOlJU2zjMgzJAzf/4WfOE6UJ56Mmn09acxmzw==}
+
+  '@types/adm-zip@0.5.8':
+    resolution: {integrity: sha512-RVVH7QvZYbN+ihqZ4kX/dMiowf6o+Jk1fNwiSdx0NahBJLU787zkULhGhJM8mf/obmLGmgdMM0bXsQTmyfbR7Q==}
 
   '@types/fs-extra@11.0.4':
     resolution: {integrity: sha512-yTbItCNreRooED33qjunPthRcSjERP1r4MqCZc7wv0u2sUkzTFp45tgUfS5+r7FrZPdmCCNflLhVSP/o+SemsQ==}
@@ -456,6 +483,10 @@ packages:
     resolution: {integrity: sha512-MPn5p+DoudI+3GfJSpAZZraE1lgLv0LcwbH3+xy7RgEhty3UIkmUMUA+5jPTDaxXae00AnX5u77FxGM8FhfKKA==}
     engines: {node: '>= 20'}
     hasBin: true
+
+  adm-zip@0.5.17:
+    resolution: {integrity: sha512-+Ut8d9LLqwEvHHJl1+PIHqoyDxFgVN847JTVM3Izi3xHDWPE4UtzzXysMZQs64DMcrJfBeS/uoEP4AD3HQHnQQ==}
+    engines: {node: '>=12.0'}
 
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
@@ -1711,6 +1742,15 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
+  '@patto/cli-core-linux-arm64@0.1.0':
+    optional: true
+
+  '@patto/cli-core-linux-x64@0.1.0':
+    optional: true
+
+  '@patto/cli-core-win32-x64@0.1.0':
+    optional: true
+
   '@sec-ant/readable-stream@0.4.1': {}
 
   '@secretlint/config-creator@10.2.2':
@@ -1820,6 +1860,10 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.6.1
 
+  '@types/adm-zip@0.5.8':
+    dependencies:
+      '@types/node': 24.12.4
+
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
@@ -1926,6 +1970,8 @@ snapshots:
       keytar: 7.9.0
     transitivePeerDependencies:
       - supports-color
+
+  adm-zip@0.5.17: {}
 
   agent-base@7.1.4: {}
 

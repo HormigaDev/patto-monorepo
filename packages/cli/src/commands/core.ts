@@ -1,9 +1,12 @@
-import type { CAC, Command } from 'cac';
-import path from 'node:path';
-import { runCore } from '../core/run.js';
-import { readCoreRequest } from '../core/stdin.js';
-import type { CoreCommand, CoreEnvelope } from '../core/types.js';
-import { diagnosticsFromOutput, printHumanOutput } from '../output/diagnostics.js';
+import type { CAC, Command } from "cac";
+import path from "node:path";
+import { runCore } from "../core/run.js";
+import { readCoreRequest } from "../core/stdin.js";
+import type { CoreCommand, CoreEnvelope } from "../core/types.js";
+import {
+    diagnosticsFromOutput,
+    printHumanOutput,
+} from "../output/diagnostics.js";
 
 interface CoreCommandOptions {
     readonly root?: string;
@@ -13,16 +16,28 @@ interface CoreCommandOptions {
 }
 
 export function registerCoreCommands(cli: CAC): void {
-    registerCoreCommand(cli.command('scan', 'Indexa el proyecto Patto'), 'scan');
-    registerCoreCommand(cli.command('lint', 'Ejecuta reglas estaticas de Patto'), 'lint');
-    registerCoreCommand(cli.command('doctor', 'Revisa salud del entorno Patto'), 'doctor');
-    registerCoreCommand(cli.command('check', 'Ejecuta scan + lint + doctor'), 'check');
+    registerCoreCommand(
+        cli.command("scan", "Indexa el proyecto Patto"),
+        "scan",
+    );
+    registerCoreCommand(
+        cli.command("lint", "Ejecuta reglas estaticas de Patto"),
+        "lint",
+    );
+    registerCoreCommand(
+        cli.command("doctor", "Revisa salud del entorno Patto"),
+        "doctor",
+    );
+    registerCoreCommand(
+        cli.command("check", "Ejecuta scan + lint + doctor"),
+        "check",
+    );
 
-    cli.command('core', 'API JSON por stdin para extensiones')
-        .option('--stdin', 'Lee un request JSON desde stdin')
-        .action(async (options: Pick<CoreCommandOptions, 'stdin'>) => {
+    cli.command("core", "API JSON por stdin para extensiones")
+        .option("--stdin", "Lee un request JSON desde stdin")
+        .action(async (options: Pick<CoreCommandOptions, "stdin">) => {
             if (!options.stdin) {
-                throw new Error('Usa patto core --stdin.');
+                throw new Error("Usa patto core --stdin.");
             }
 
             await runFromStdin();
@@ -31,10 +46,10 @@ export function registerCoreCommands(cli: CAC): void {
 
 function registerCoreCommand(command: Command, coreCommand: CoreCommand): void {
     command
-        .option('--root <path>', 'Raiz del proyecto Patto')
-        .option('--lang <lang>', 'Idioma del core: auto o es')
-        .option('--json', 'Imprime la salida JSON cruda del core')
-        .option('--stdin', 'Lee root/lang desde un request JSON en stdin')
+        .option("--root <path>", "Raiz del proyecto Patto")
+        .option("--lang <lang>", "Idioma del core: auto o es")
+        .option("--json", "Imprime la salida JSON cruda del core")
+        .option("--stdin", "Lee root/lang desde un request JSON en stdin")
         .action(async (options: CoreCommandOptions) => {
             if (options.stdin) {
                 await runFromStdin(coreCommand);
@@ -45,7 +60,10 @@ function registerCoreCommand(command: Command, coreCommand: CoreCommand): void {
         });
 }
 
-async function runDirect(command: CoreCommand, options: CoreCommandOptions): Promise<void> {
+async function runDirect(
+    command: CoreCommand,
+    options: CoreCommandOptions,
+): Promise<void> {
     const root = path.resolve(options.root ?? process.cwd());
     const result = await runCore({
         command,
@@ -55,8 +73,8 @@ async function runDirect(command: CoreCommand, options: CoreCommandOptions): Pro
 
     if (options.json) {
         process.stdout.write(result.stdout);
-        if (!result.stdout.endsWith('\n')) {
-            process.stdout.write('\n');
+        if (!result.stdout.endsWith("\n")) {
+            process.stdout.write("\n");
         }
     } else {
         if (result.stderr.trim().length > 0) {
@@ -88,9 +106,11 @@ async function runFromStdin(defaultCommand?: CoreCommand): Promise<void> {
 export function writeStructuredError(error: unknown): void {
     const message = error instanceof Error ? error.message : String(error);
     const code =
-        error instanceof Error && 'code' in error && typeof error.code === 'string'
+        error instanceof Error &&
+        "code" in error &&
+        typeof error.code === "string"
             ? error.code
-            : 'patto_cli_error';
+            : "patto_cli_error";
     const payload = {
         ok: false,
         error: {

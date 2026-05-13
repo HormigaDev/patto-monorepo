@@ -1,5 +1,5 @@
-export type CoreCommand = 'scan' | 'lint' | 'doctor' | 'check';
-export type DiagnosticLevel = 'error' | 'warning' | 'info';
+export type CoreCommand = "scan" | "lint" | "doctor" | "check";
+export type DiagnosticLevel = "error" | "warning" | "info";
 
 export interface CoreDiagnostic {
     readonly level: DiagnosticLevel;

@@ -61,7 +61,7 @@ export function activate(context: vscode.ExtensionContext): void {
     );
 
     const watcher = vscode.workspace.createFileSystemWatcher(
-        '**/{package.json,tsconfig.json,.patto/config.json,src/**/*.ts}',
+        '**/{package.json,tsconfig.json,.patto/config.json,.patto/config.schema.json,src/**/*.ts,src/i18n/locale/**/*.ts}',
     );
 
     context.subscriptions.push(
@@ -214,12 +214,17 @@ function shouldReactToDocument(
         document.languageId === 'json' ||
         document.fileName.endsWith('.env') ||
         document.fileName.endsWith('.command.ts') ||
-        document.fileName.endsWith('.plugin.ts')
+        document.fileName.endsWith('.plugin.ts') ||
+        document.fileName.includes(`${folder.uri.fsPath}${pathSeparator()}src${pathSeparator()}i18n${pathSeparator()}`)
     );
 }
 
 function workspaceFolderForDocument(document: vscode.TextDocument): vscode.WorkspaceFolder | undefined {
     return workspaceFolderForUri(document.uri);
+}
+
+function pathSeparator(): string {
+    return process.platform === 'win32' ? '\\' : '/';
 }
 
 function workspaceFolderForUri(uri: vscode.Uri): vscode.WorkspaceFolder | undefined {

@@ -33,6 +33,7 @@ pub(super) fn scan_project_config(
                 exists: false,
                 lang: "es".to_string(),
                 supported_lang: true,
+                features: Vec::new(),
             },
             None,
         );
@@ -48,6 +49,7 @@ pub(super) fn scan_project_config(
                     exists: true,
                     lang: "es".to_string(),
                     supported_lang: true,
+                    features: Vec::new(),
                 },
                 None,
             );
@@ -66,6 +68,12 @@ pub(super) fn scan_project_config(
     if parsed_config.is_err() {
         diagnostics.push(config_invalid_diagnostic(locale));
     }
+
+    let features = parsed_config
+        .as_ref()
+        .ok()
+        .map(enabled_features)
+        .unwrap_or_default();
 
     let supported_lang = lang_value == "es";
     if !supported_lang {
@@ -88,9 +96,30 @@ pub(super) fn scan_project_config(
             exists: true,
             lang: lang_value,
             supported_lang,
+            features,
         },
         parsed_config.ok(),
     )
+}
+
+fn enabled_features(config: &Value) -> Vec<String> {
+    let mut features = config
+        .get("features")
+        .and_then(Value::as_object)
+        .map(|features| {
+            features
+                .iter()
+                .filter_map(|(feature, enabled)| {
+                    enabled
+                        .as_bool()
+                        .filter(|value| *value)
+                        .map(|_| feature.clone())
+                })
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    features.sort();
+    features
 }
 
 fn config_invalid_diagnostic(locale: Lang) -> Diagnostic {

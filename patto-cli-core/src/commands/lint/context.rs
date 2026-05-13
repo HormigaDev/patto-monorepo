@@ -1,3 +1,4 @@
+use serde_json::Value;
 use std::fs;
 use std::path::Path;
 
@@ -19,6 +20,17 @@ impl<'a> RuleContext<'a> {
 
     pub fn read_file(&self, relative_file: &str) -> Option<String> {
         fs::read_to_string(self.root().join(relative_file)).ok()
+    }
+
+    pub fn feature_enabled(&self, feature: &str) -> bool {
+        self.project
+            .config_json
+            .as_ref()
+            .and_then(|value| value.get("features"))
+            .and_then(Value::as_object)
+            .and_then(|features| features.get(feature))
+            .and_then(Value::as_bool)
+            .unwrap_or(false)
     }
 
     pub fn location_for_text(&self, relative_file: &str, value: &str) -> Option<(u32, u32)> {

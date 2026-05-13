@@ -1,5 +1,6 @@
 mod build_output;
 mod env;
+mod i18n;
 mod package_json;
 mod project_config;
 mod runtime;
@@ -23,6 +24,7 @@ pub fn run_all(context: &DoctorContext<'_>) -> Vec<CheckResult> {
         env::run(context),
         tsconfig::run(context),
         project_config::run(context),
+        i18n::run(context),
         sharding_redis::run(context),
         build_output::run(context),
     ]

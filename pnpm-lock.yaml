@@ -31,6 +31,16 @@ importers:
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
+    optionalDependencies:
+      '@patto/cli-core-linux-arm64':
+        specifier: 0.1.2
+        version: link:../cli-core-linux-arm64
+      '@patto/cli-core-linux-x64':
+        specifier: 0.1.2
+        version: link:../cli-core-linux-x64
+      '@patto/cli-core-win32-x64':
+        specifier: 0.1.2
+        version: link:../cli-core-win32-x64
     devDependencies:
       '@types/adm-zip':
         specifier: ^0.5.7
@@ -50,16 +60,6 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
-    optionalDependencies:
-      '@patto/cli-core-linux-arm64':
-        specifier: 0.1.0
-        version: 0.1.0
-      '@patto/cli-core-linux-x64':
-        specifier: 0.1.0
-        version: 0.1.0
-      '@patto/cli-core-win32-x64':
-        specifier: 0.1.0
-        version: 0.1.0
 
   packages/cli-core-linux-arm64: {}
 
@@ -313,24 +313,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@patto/cli-core-linux-arm64@0.1.0':
-    resolution: {integrity: sha512-4g1erifXmp9Y9hh0fh/F0vKYUUDJkvTXCcChYOBjdpfGyVyn9YKtx/trDGiACub+C033dp3mBDqgiOnUAmJ2cA==}
-    cpu: [arm64]
-    os: [linux]
-    hasBin: true
-
-  '@patto/cli-core-linux-x64@0.1.0':
-    resolution: {integrity: sha512-+PjOAqICt0E+PhZL4vLlo2OyvGrhq7ik70IqYzgAf4T/TTciCpMoI0di/6s71d6C2CuAkZxC6uYhavquZF8SEw==}
-    cpu: [x64]
-    os: [linux]
-    hasBin: true
-
-  '@patto/cli-core-win32-x64@0.1.0':
-    resolution: {integrity: sha512-4C4aUK69i5ioBtuDK6hGpbS9J+Gw9R8zQuj+4ulPwpJOCSpNwtTtFaP+rCmuJEBrgTHJuN2fuu1Qtcvz6EYPgw==}
-    cpu: [x64]
-    os: [win32]
-    hasBin: true
 
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
@@ -1741,15 +1723,6 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
-
-  '@patto/cli-core-linux-arm64@0.1.0':
-    optional: true
-
-  '@patto/cli-core-linux-x64@0.1.0':
-    optional: true
-
-  '@patto/cli-core-win32-x64@0.1.0':
-    optional: true
 
   '@sec-ant/readable-stream@0.4.1': {}
 

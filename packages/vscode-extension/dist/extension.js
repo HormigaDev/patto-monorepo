@@ -68,7 +68,7 @@ function activate(context) {
             scheduleDiagnostics(collection, output, 'config', (0, workspace_1.getActivePattoWorkspaceFolder)() ?? undefined);
         }
     }));
-    const watcher = vscode.workspace.createFileSystemWatcher('**/{package.json,tsconfig.json,.patto/config.json,src/**/*.ts}');
+    const watcher = vscode.workspace.createFileSystemWatcher('**/{package.json,tsconfig.json,.patto/config.json,.patto/config.schema.json,src/**/*.ts,src/i18n/locale/**/*.ts}');
     context.subscriptions.push(watcher, watcher.onDidCreate((uri) => scheduleDiagnostics(collection, output, 'file-create', workspaceFolderForUri(uri))), watcher.onDidChange((uri) => scheduleDiagnostics(collection, output, 'file-change', workspaceFolderForUri(uri))), watcher.onDidDelete((uri) => scheduleDiagnostics(collection, output, 'file-delete', workspaceFolderForUri(uri))));
     if (vscode.workspace.getConfiguration('patto').get('runDiagnosticsOnOpen', true)) {
         scheduleDiagnostics(collection, output, 'open', pattoFolders[0]);
@@ -172,10 +172,14 @@ function shouldReactToDocument(document, setting) {
         document.languageId === 'json' ||
         document.fileName.endsWith('.env') ||
         document.fileName.endsWith('.command.ts') ||
-        document.fileName.endsWith('.plugin.ts'));
+        document.fileName.endsWith('.plugin.ts') ||
+        document.fileName.includes(`${folder.uri.fsPath}${pathSeparator()}src${pathSeparator()}i18n${pathSeparator()}`));
 }
 function workspaceFolderForDocument(document) {
     return workspaceFolderForUri(document.uri);
+}
+function pathSeparator() {
+    return process.platform === 'win32' ? '\\' : '/';
 }
 function workspaceFolderForUri(uri) {
     return vscode.workspace.getWorkspaceFolder(uri);

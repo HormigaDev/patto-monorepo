@@ -43,6 +43,7 @@ pub fn empty_project_index() -> ProjectIndex {
             exists: false,
             lang: "es".to_string(),
             supported_lang: true,
+            features: Vec::new(),
         },
         package: package::empty_package_index(),
         paths: ProjectPathsIndex {

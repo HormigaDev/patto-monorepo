@@ -23,6 +23,10 @@ pub enum LintRule {
     PluginSpecifiedCommands,
     ShardingRedisConfig,
     ComponentHandlerMethods,
+    FeatureConfig,
+    I18nMissingKeys,
+    I18nDynamicKeys,
+    I18nLocaleParity,
 }
 
 impl LintRule {
@@ -42,6 +46,10 @@ impl LintRule {
             Self::PluginSpecifiedCommands => DiagnosticCode::PATTO_LINT_PLUGIN_SPECIFIED_COMMANDS,
             Self::ShardingRedisConfig => DiagnosticCode::PATTO_LINT_SHARDING_REDIS_CONFIG,
             Self::ComponentHandlerMethods => DiagnosticCode::PATTO_LINT_COMPONENT_HANDLER_METHODS,
+            Self::FeatureConfig => DiagnosticCode::PATTO_LINT_FEATURE_CONFIG,
+            Self::I18nMissingKeys => DiagnosticCode::PATTO_LINT_I18N_MISSING_KEYS,
+            Self::I18nDynamicKeys => DiagnosticCode::PATTO_LINT_I18N_DYNAMIC_KEYS,
+            Self::I18nLocaleParity => DiagnosticCode::PATTO_LINT_I18N_LOCALE_PARITY,
         }
     }
 
@@ -60,12 +68,16 @@ impl LintRule {
             | Self::InvalidArguments
             | Self::CommandFolderConvention
             | Self::PluginSpecifiedCommands
-            | Self::ShardingRedisConfig => LintRuleSeverity::Warning,
+            | Self::ShardingRedisConfig
+            | Self::FeatureConfig
+            | Self::I18nMissingKeys
+            | Self::I18nDynamicKeys
+            | Self::I18nLocaleParity => LintRuleSeverity::Warning,
         }
     }
 }
 
-pub fn all_rules() -> [LintRule; 14] {
+pub fn all_rules() -> [LintRule; 18] {
     [
         LintRule::DuplicateCommands,
         LintRule::DuplicateAliases,
@@ -81,6 +93,10 @@ pub fn all_rules() -> [LintRule; 14] {
         LintRule::PluginSpecifiedCommands,
         LintRule::ShardingRedisConfig,
         LintRule::ComponentHandlerMethods,
+        LintRule::FeatureConfig,
+        LintRule::I18nMissingKeys,
+        LintRule::I18nDynamicKeys,
+        LintRule::I18nLocaleParity,
     ]
 }
 

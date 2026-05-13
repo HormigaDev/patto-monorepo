@@ -202,7 +202,7 @@ patto scan --root /path/to/bot
 
 ### lint
 
-Ejecuta las reglas estáticas de Patto sobre comandos, definiciones, plugins y convenciones del proyecto.
+Ejecuta las reglas estáticas de Patto sobre comandos, definiciones, plugins y convenciones del proyecto. Si `features.i18n` está activo, también valida keys usadas con `this.t(...)`, keys dinámicas y paridad de archivos en `src/i18n/locale`.
 
 ```bash
 patto lint --root /path/to/bot
@@ -211,7 +211,7 @@ patto lint --root /path/to/bot
 ### doctor
 
 Verifica la salud del proyecto: runtime, dependencias, scripts, archivos env, tsconfig,
-configuración de Patto, sharding/Redis y salida de compilación.
+configuración de Patto, features como i18n, sharding/Redis y salida de compilación.
 
 ```bash
 patto doctor --root /path/to/bot

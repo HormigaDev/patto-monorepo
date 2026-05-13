@@ -17,7 +17,7 @@ not download packages by itself.
 - Uses the same `@patto/cli` API that powers the terminal workflow.
 - Uses the `patto` command from your system `PATH`.
 - Runs an initial check when a Patto workspace opens.
-- Refreshes diagnostics after relevant files change or are saved.
+- Refreshes diagnostics after relevant files change or are saved, including `.patto/config.schema.json` and `src/i18n` locale files.
 
 ## Requirements
 

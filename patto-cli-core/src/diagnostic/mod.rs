@@ -77,6 +77,10 @@ impl DiagnosticCode {
     pub const PATTO_LINT_PLUGIN_SPECIFIED_COMMANDS: &'static str = "plugin-specified-commands";
     pub const PATTO_LINT_SHARDING_REDIS_CONFIG: &'static str = "sharding-redis-config";
     pub const PATTO_LINT_COMPONENT_HANDLER_METHODS: &'static str = "component-handler-methods";
+    pub const PATTO_LINT_FEATURE_CONFIG: &'static str = "feature-config";
+    pub const PATTO_LINT_I18N_MISSING_KEYS: &'static str = "i18n-missing-keys";
+    pub const PATTO_LINT_I18N_DYNAMIC_KEYS: &'static str = "i18n-dynamic-keys";
+    pub const PATTO_LINT_I18N_LOCALE_PARITY: &'static str = "i18n-locale-parity";
     pub const PATTO_DOCTOR_RUNTIME: &'static str = "doctor-runtime";
     pub const PATTO_DOCTOR_PACKAGE_JSON: &'static str = "doctor-package-json";
     pub const PATTO_DOCTOR_ENV: &'static str = "doctor-env";
@@ -84,4 +88,5 @@ impl DiagnosticCode {
     pub const PATTO_DOCTOR_PROJECT_CONFIG: &'static str = "doctor-project-config";
     pub const PATTO_DOCTOR_SHARDING_REDIS: &'static str = "doctor-sharding-redis";
     pub const PATTO_DOCTOR_BUILD_OUTPUT: &'static str = "doctor-build-output";
+    pub const PATTO_DOCTOR_I18N: &'static str = "doctor-i18n";
 }

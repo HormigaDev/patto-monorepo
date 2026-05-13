@@ -104,15 +104,25 @@ Current rule set:
 - `plugin-specified-commands`
 - `sharding-redis-config`
 - `component-handler-methods`
+- `feature-config`
+- `i18n-missing-keys` (runs only when `features.i18n` is `true`)
+- `i18n-dynamic-keys` (runs only when `features.i18n` is `true`)
+- `i18n-locale-parity` (runs only when `features.i18n` is `true`)
 
 Rule severities are read from `.patto/config.json`:
 
 ```json
 {
+  "features": {
+    "i18n": true
+  },
   "lint-rules": {
     "duplicate-commands": "error",
     "invalid-command-names": "warning",
-    "ghost-parent-mix": "off"
+    "ghost-parent-mix": "off",
+    "i18n-missing-keys": "warning",
+    "i18n-dynamic-keys": "warning",
+    "i18n-locale-parity": "warning"
   }
 }
 ```
@@ -141,6 +151,7 @@ Checks include:
 - env files and required env vars
 - `tsconfig.json`
 - `.patto/config.json`
+- feature-gated i18n readiness
 - sharding/Redis configuration
 - build output
 
@@ -210,7 +221,10 @@ Minimum `.patto/config.json`:
 ```json
 {
   "schemaVersion": 1,
-  "lang": "es"
+  "lang": "es",
+  "features": {
+    "i18n": true
+  }
 }
 ```
 

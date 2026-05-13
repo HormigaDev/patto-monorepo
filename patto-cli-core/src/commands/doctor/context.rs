@@ -38,6 +38,17 @@ impl<'a> DoctorContext<'a> {
         utils::read_env_file(self.root(), ".env")
     }
 
+    pub fn feature_enabled(&self, feature: &str) -> bool {
+        self.project
+            .config_json
+            .as_ref()
+            .and_then(|value| value.get("features"))
+            .and_then(Value::as_object)
+            .and_then(|features| features.get(feature))
+            .and_then(Value::as_bool)
+            .unwrap_or(false)
+    }
+
     pub fn command_version(&self, command: &str, arg: &str) -> Option<String> {
         let mut child = Command::new(command)
             .arg(arg)

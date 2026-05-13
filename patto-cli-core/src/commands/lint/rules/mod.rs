@@ -4,7 +4,9 @@ mod component_handler_methods;
 mod decorated_base_command;
 mod duplicate_aliases;
 mod duplicate_commands;
+mod feature_config;
 mod ghost_parent_mix;
+mod i18n;
 mod invalid_arguments;
 mod invalid_command_names;
 mod missing_run_method;
@@ -43,6 +45,10 @@ pub fn run_enabled_rules(context: &RuleContext<'_>, config: &RuleConfig) -> Vec<
             LintRule::PluginSpecifiedCommands => plugin_specified_commands::run(context, severity),
             LintRule::ShardingRedisConfig => sharding_redis_config::run(context, severity),
             LintRule::ComponentHandlerMethods => component_handler_methods::run(context, severity),
+            LintRule::FeatureConfig => feature_config::run(context, severity),
+            LintRule::I18nMissingKeys => i18n::run_missing_keys(context, severity),
+            LintRule::I18nDynamicKeys => i18n::run_dynamic_keys(context, severity),
+            LintRule::I18nLocaleParity => i18n::run_locale_parity(context, severity),
         });
     }
 

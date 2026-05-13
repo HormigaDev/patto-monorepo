@@ -1,6 +1,6 @@
 {
     "name": "@patto/cli",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Official CLI for Patto Bot Template",
     "type": "module",
     "license": "AGPL-3.0-only",
@@ -29,9 +29,9 @@
         "prompts": "^2.4.2"
     },
     "optionalDependencies": {
-        "@patto/cli-core-linux-arm64": "0.1.1",
-        "@patto/cli-core-linux-x64": "0.1.1",
-        "@patto/cli-core-win32-x64": "0.1.1"
+        "@patto/cli-core-linux-arm64": "0.1.2",
+        "@patto/cli-core-linux-x64": "0.1.2",
+        "@patto/cli-core-win32-x64": "0.1.2"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.5.7",

@@ -149,6 +149,36 @@ pub fn translate(key: &str) -> &'static str {
         "component-handler-methods.hint" => {
             "Agrega el método static correspondiente en la clase del comando."
         }
+        "feature-config.invalid-shape.message" => {
+            "`features` debe ser un objeto de flags booleanos."
+        }
+        "feature-config.unknown.message" => {
+            "La feature `{feature}` no está soportada por este core."
+        }
+        "feature-config.non-boolean.message" => {
+            "La feature `{feature}` debe configurarse como boolean."
+        }
+        "feature-config" => "La configuración de features no coincide con el schema soportado.",
+        "feature-config.hint" => {
+            "Usa features conocidas, por ejemplo: { \"features\": { \"i18n\": true } }."
+        }
+        "i18n-missing-keys.message" => "La key i18n `{key}` no existe en `{file}`.",
+        "i18n-missing-keys" => "Hay keys i18n usadas en código sin traducción.",
+        "i18n-missing-keys.hint" => {
+            "Agrega la key en todos los archivos existentes de src/i18n/locale o cambia la llamada."
+        }
+        "i18n-dynamic-keys.message" => {
+            "Esta key i18n es dinámica y no puede validarse estáticamente."
+        }
+        "i18n-dynamic-keys" => "Hay llamadas i18n con keys dinámicas.",
+        "i18n-dynamic-keys.hint" => {
+            "Prefiere this.t('clave.literal') para que el linter pueda validar las traducciones."
+        }
+        "i18n-locale-parity.message" => "La key i18n `{key}` falta en el locale `{locale}`.",
+        "i18n-locale-parity" => "Los archivos de locale no tienen el mismo conjunto de keys.",
+        "i18n-locale-parity.hint" => {
+            "Mantén src/i18n/locale/es.ts, en.ts y pt.ts con las mismas keys."
+        }
         "doctor-env.template-missing.message" => "No se encontró .env.template.",
         "doctor-env.env-missing.message" => "No se encontró .env.",
         "doctor-env.required-missing.message" => "Falta la variable `{name}` en .env.",
@@ -198,6 +228,14 @@ pub fn translate(key: &str) -> &'static str {
         "doctor-build-output.check.title" => "Salida de build",
         "doctor-build-output.detail.main" => "main: {main}",
         "doctor-build-output.detail.main-missing" => "package.json no define main",
+        "doctor-i18n.missing-file.message" => "La feature i18n está activa pero falta `{file}`.",
+        "doctor-i18n.base-command-helper.message" => {
+            "BaseCommand no expone el helper i18n `t` esperado."
+        }
+        "doctor-i18n.check.title" => "i18n",
+        "doctor-i18n.detail.disabled" => "features.i18n no está activo",
+        "doctor-i18n.detail.file-present" => "{file}: presente",
+        "doctor-i18n.detail.file-missing" => "{file}: faltante",
         "doctor-runtime" => "El entorno local no cumple los requisitos mínimos.",
         "doctor-runtime.hint" => "Instala Node.js 18 o superior y el package manager del proyecto.",
         "doctor-package-json" => "package.json no contiene la configuración esperada.",
@@ -216,6 +254,10 @@ pub fn translate(key: &str) -> &'static str {
         }
         "doctor-build-output" => "La salida de build no existe todavía.",
         "doctor-build-output.hint" => "Ejecuta el script build antes de usar start en producción.",
+        "doctor-i18n" => "El entorno i18n no está completo.",
+        "doctor-i18n.hint" => {
+            "Si features.i18n está activo, conserva src/i18n, los locales es/en/pt y BaseCommand.t."
+        }
         _ => "",
     }
 }

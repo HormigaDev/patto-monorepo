@@ -54,8 +54,8 @@ Core nativo escrito en Rust. Expone el binario `patto-core`.
 Comandos:
 
 - `scan`: indexa el proyecto y escribe `.patto/index.json`.
-- `lint`: ejecuta reglas estaticas especificas de Patto.
-- `doctor`: revisa entorno, dependencias, configuracion y build.
+- `lint`: ejecuta reglas estaticas especificas de Patto, incluidas reglas i18n cuando `features.i18n` esta activo.
+- `doctor`: revisa entorno, dependencias, configuracion, features y build.
 - `check`: agregador de CI que ejecuta scan + lint + doctor.
 
 Ejemplo desde el directorio del core:
@@ -233,11 +233,14 @@ Configuracion minima:
 ```json
 {
   "schemaVersion": 1,
-  "lang": "es"
+  "lang": "es",
+  "features": {
+    "i18n": true
+  }
 }
 ```
 
-Por ahora el idioma maduro es `es`.
+Por ahora el idioma maduro del CLI es `es`. En proyectos de bot, `features.i18n` activa reglas extra para validar `this.t(...)`, paridad de locales y el entorno `src/i18n`.
 
 ## Diagnostics
 

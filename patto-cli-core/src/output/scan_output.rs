@@ -35,6 +35,7 @@ pub struct ProjectConfigIndex {
     pub exists: bool,
     pub lang: String,
     pub supported_lang: bool,
+    pub features: Vec<String>,
 }
 
 #[derive(Debug, Serialize)]

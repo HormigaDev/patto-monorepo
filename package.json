@@ -10,7 +10,8 @@
         "build:core": "bash ./build-cli-core.sh",
         "dev": "pnpm --filter @patto/cli dev",
         "test": "pnpm -r test",
-        "lint": "pnpm -r lint"
+        "lint": "pnpm -r lint",
+        "publish": "pnpm publish --access public --registry https://registry.npmjs.org/"
     },
     "devDependencies": {},
     "keywords": [],

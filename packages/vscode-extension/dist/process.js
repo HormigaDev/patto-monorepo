@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runProcess = runProcess;
+exports.runPattoCliProcess = runPattoCliProcess;
 const node_child_process_1 = require("node:child_process");
-function runProcess(command, args, options = {}) {
+function runPattoCliProcess(cliCommand, args, options = {}) {
     return new Promise((resolve, reject) => {
-        const child = (0, node_child_process_1.spawn)(command, args, {
+        const child = (0, node_child_process_1.spawn)(cliCommand, args, {
             cwd: options.cwd,
             windowsHide: true,
             stdio: ['pipe', 'pipe', 'pipe'],

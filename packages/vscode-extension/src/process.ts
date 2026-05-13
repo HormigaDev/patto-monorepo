@@ -1,18 +1,18 @@
 import { spawn } from 'node:child_process';
 
-export interface ProcessResult {
+export interface PattoProcessResult {
     readonly exitCode: number;
     readonly stdout: string;
     readonly stderr: string;
 }
 
-export function runProcess(
-    command: string,
+export function runPattoCliProcess(
+    cliCommand: string,
     args: string[],
     options: { readonly cwd?: string; readonly input?: string } = {},
-): Promise<ProcessResult> {
+): Promise<PattoProcessResult> {
     return new Promise((resolve, reject) => {
-        const child = spawn(command, args, {
+        const child = spawn(cliCommand, args, {
             cwd: options.cwd,
             windowsHide: true,
             stdio: ['pipe', 'pipe', 'pipe'],

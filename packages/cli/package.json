@@ -28,9 +28,9 @@
         "prompts": "^2.4.2"
     },
     "optionalDependencies": {
-        "@patto/cli-core-linux-arm64": "workspace:*",
-        "@patto/cli-core-linux-x64": "workspace:*",
-        "@patto/cli-core-win32-x64": "workspace:*"
+        "@patto/cli-core-linux-arm64": "0.1.0",
+        "@patto/cli-core-linux-x64": "0.1.0",
+        "@patto/cli-core-win32-x64": "0.1.0"
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",

@@ -7,6 +7,15 @@
     "license": "AGPL-3.0-only",
     "type": "commonjs",
     "main": "./dist/extension.js",
+    "extensionKind": [
+        "workspace"
+    ],
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": false,
+            "description": "Patto runs the local patto CLI to analyze the current workspace, so trusted workspaces are required."
+        }
+    },
     "engines": {
         "vscode": "^1.90.0",
         "node": ">=18"
@@ -35,6 +44,7 @@
     },
     "homepage": "https://github.com/HormigaDev/patto-monorepo#readme",
     "activationEvents": [
+        "onStartupFinished",
         "onCommand:patto.check",
         "onCommand:patto.lint",
         "onCommand:patto.showCliSetup",
@@ -70,7 +80,7 @@
                         "lint",
                         "check"
                     ],
-                    "default": "lint",
+                    "default": "check",
                     "description": "Core command used for editor diagnostics."
                 },
                 "patto.cliPath": {
@@ -78,16 +88,33 @@
                     "default": "",
                     "description": "Optional path to the patto CLI executable."
                 },
+                "patto.runDiagnosticsOnOpen": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run Patto check when a Patto workspace is opened."
+                },
+                "patto.runDiagnosticsOnChange": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Run Patto diagnostics after TypeScript or JSON files change."
+                },
                 "patto.runDiagnosticsOnSave": {
                     "type": "boolean",
                     "default": true,
                     "description": "Run Patto diagnostics when TypeScript files are saved."
+                },
+                "patto.diagnosticsDebounceMs": {
+                    "type": "number",
+                    "default": 800,
+                    "minimum": 100,
+                    "maximum": 10000,
+                    "description": "Delay before running Patto diagnostics after a file changes."
                 }
             }
         }
     },
     "scripts": {
-        "vscode:prepublish": "pnpm run build",
+        "vscode:prepublish": "tsc -p tsconfig.json",
         "build": "tsc -p tsconfig.json",
         "watch": "tsc -w -p tsconfig.json",
         "lint": "tsc -p tsconfig.json --noEmit",

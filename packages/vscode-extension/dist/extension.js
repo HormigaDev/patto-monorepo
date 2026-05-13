@@ -45,26 +45,35 @@ const cli_1 = require("./cli");
 const diagnostics_1 = require("./diagnostics");
 const workspace_1 = require("./workspace");
 let diagnosticTimer;
+let scheduledFolder;
+let isRunningDiagnostics = false;
+let shouldRunAgain = false;
 function activate(context) {
     const output = vscode.window.createOutputChannel('Patto');
     const collection = vscode.languages.createDiagnosticCollection('patto');
     context.subscriptions.push(output, collection);
     context.subscriptions.push(vscode.commands.registerCommand('patto.check', () => runDiagnostics('check', collection, output, true)), vscode.commands.registerCommand('patto.lint', () => runDiagnostics('lint', collection, output, true)), vscode.commands.registerCommand('patto.showCliSetup', async () => {
-        await (0, cli_1.showCliSetupMessage)();
+        (0, cli_1.showCliSetupMessage)();
     }), vscode.workspace.onDidSaveTextDocument((document) => {
-        const runOnSave = vscode.workspace
-            .getConfiguration('patto')
-            .get('runDiagnosticsOnSave', true);
-        if (runOnSave && document.languageId === 'typescript') {
-            scheduleDiagnostics(collection, output);
+        if (shouldReactToDocument(document, 'runDiagnosticsOnSave')) {
+            scheduleDiagnostics(collection, output, 'save', workspaceFolderForDocument(document));
+        }
+    }), vscode.workspace.onDidChangeTextDocument((event) => {
+        if (shouldReactToDocument(event.document, 'runDiagnosticsOnChange')) {
+            scheduleDiagnostics(collection, output, 'change', workspaceFolderForDocument(event.document));
         }
     }), vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('patto')) {
-            scheduleDiagnostics(collection, output);
+            scheduleDiagnostics(collection, output, 'config');
         }
     }));
+    const watcher = vscode.workspace.createFileSystemWatcher('**/{package.json,tsconfig.json,.patto/config.json,src/**/*.ts}');
+    context.subscriptions.push(watcher, watcher.onDidCreate((uri) => scheduleDiagnostics(collection, output, 'file-create', workspaceFolderForUri(uri))), watcher.onDidChange((uri) => scheduleDiagnostics(collection, output, 'file-change', workspaceFolderForUri(uri))), watcher.onDidDelete((uri) => scheduleDiagnostics(collection, output, 'file-delete', workspaceFolderForUri(uri))));
     if (isPattoWorkspace()) {
-        output.appendLine('Patto workspace detected. Diagnostics will run on save or by command.');
+        output.appendLine('Patto workspace detected. Running initial check.');
+        if (vscode.workspace.getConfiguration('patto').get('runDiagnosticsOnOpen', true)) {
+            scheduleDiagnostics(collection, output, 'open');
+        }
     }
 }
 function deactivate() {
@@ -72,36 +81,48 @@ function deactivate() {
         clearTimeout(diagnosticTimer);
     }
 }
-function scheduleDiagnostics(collection, output) {
+function scheduleDiagnostics(collection, output, reason, folder) {
     if (!vscode.workspace.getConfiguration('patto').get('enableDiagnostics', true)) {
         collection.clear();
         return;
     }
+    scheduledFolder = folder ?? scheduledFolder ?? (0, workspace_1.getActiveWorkspaceFolder)() ?? undefined;
     if (diagnosticTimer !== undefined) {
         clearTimeout(diagnosticTimer);
     }
+    const debounceMs = vscode.workspace
+        .getConfiguration('patto')
+        .get('diagnosticsDebounceMs', 800);
     diagnosticTimer = setTimeout(() => {
         const command = vscode.workspace
             .getConfiguration('patto')
-            .get('diagnosticsCommand', 'lint');
-        void runDiagnostics(command, collection, output, false);
-    }, 350);
+            .get('diagnosticsCommand', 'check');
+        output.appendLine(`Scheduling Patto ${command} (${reason}).`);
+        void runDiagnostics(command, collection, output, false, scheduledFolder);
+    }, debounceMs);
 }
-async function runDiagnostics(command, collection, output, revealOutput) {
-    const workspaceFolder = (0, workspace_1.getActiveWorkspaceFolder)();
+async function runDiagnostics(command, collection, output, revealOutput, folder) {
+    const workspaceFolder = folder ?? (0, workspace_1.getActiveWorkspaceFolder)();
     if (!workspaceFolder) {
         vscode.window.showWarningMessage('Abre un proyecto Patto para ejecutar diagnostics.');
         return;
     }
-    const cliPath = await (0, cli_1.ensurePattoCli)();
-    if (!cliPath) {
+    if (isRunningDiagnostics) {
+        shouldRunAgain = true;
+        scheduledFolder = workspaceFolder;
+        return;
+    }
+    const cliCommand = await (0, cli_1.resolvePattoCli)();
+    if (!cliCommand) {
+        (0, cli_1.showCliSetupMessage)();
         return;
     }
     try {
+        isRunningDiagnostics = true;
         const envelope = await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window,
             title: `Patto ${command}`,
-        }, () => (0, cli_1.runPattoCore)(cliPath, workspaceFolder.uri.fsPath, command));
+        }, () => (0, cli_1.runPattoCore)(cliCommand, workspaceFolder.uri.fsPath, command));
         (0, diagnostics_1.applyDiagnostics)(collection, workspaceFolder, envelope.diagnostics);
         output.appendLine(`Patto ${command}: ${envelope.diagnostics.length} diagnostic(s), exit ${envelope.exitCode}.`);
         if (envelope.stderr.trim().length > 0) {
@@ -115,8 +136,34 @@ async function runDiagnostics(command, collection, output, revealOutput) {
         const message = error instanceof Error ? error.message : String(error);
         output.appendLine(message);
         output.show(true);
-        vscode.window.showErrorMessage(`Patto fallo: ${message}`);
+        (0, cli_1.showCliSetupMessage)();
     }
+    finally {
+        isRunningDiagnostics = false;
+        if (shouldRunAgain) {
+            shouldRunAgain = false;
+            scheduleDiagnostics(collection, output, 'queued', scheduledFolder);
+        }
+    }
+}
+function shouldReactToDocument(document, setting) {
+    if (!vscode.workspace.getConfiguration('patto').get(setting, true)) {
+        return false;
+    }
+    if (document.uri.scheme !== 'file') {
+        return false;
+    }
+    return (document.languageId === 'typescript' ||
+        document.languageId === 'json' ||
+        document.fileName.endsWith('.env') ||
+        document.fileName.endsWith('.command.ts') ||
+        document.fileName.endsWith('.plugin.ts'));
+}
+function workspaceFolderForDocument(document) {
+    return workspaceFolderForUri(document.uri);
+}
+function workspaceFolderForUri(uri) {
+    return vscode.workspace.getWorkspaceFolder(uri);
 }
 function isPattoWorkspace() {
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];

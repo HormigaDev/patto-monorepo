@@ -1,1 +1,2 @@
 patto-cli-core/**/*
+packages/vscode-extension/**/*

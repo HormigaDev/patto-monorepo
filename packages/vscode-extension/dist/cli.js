@@ -36,42 +36,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ensurePattoCli = ensurePattoCli;
-exports.showCliSetupMessage = showCliSetupMessage;
+exports.resolvePattoCli = resolvePattoCli;
 exports.runPattoCore = runPattoCore;
+exports.showCliSetupMessage = showCliSetupMessage;
 const vscode = __importStar(require("vscode"));
 const node_fs_1 = require("node:fs");
 const node_path_1 = __importDefault(require("node:path"));
 const process_1 = require("./process");
 const CLI_PACKAGE = '@patto/cli';
-async function ensurePattoCli() {
+const CLI_COMMAND = 'patto';
+async function resolvePattoCli() {
     const configuredPath = vscode.workspace.getConfiguration('patto').get('cliPath')?.trim();
     if (configuredPath) {
         return configuredPath;
-    }
-    if (await commandExists('patto')) {
-        return 'patto';
     }
     const localCli = findWorkspaceCli();
     if (localCli) {
         return localCli;
     }
-    await showCliSetupMessage();
-    return null;
+    return CLI_COMMAND;
 }
-async function showCliSetupMessage() {
-    const choice = await vscode.window.showWarningMessage(`Patto CLI no esta instalado. Instala ${CLI_PACKAGE} manualmente o configura una ruta personalizada.`, 'Configurar ruta', 'Abrir README');
-    if (choice === 'Configurar ruta') {
-        await vscode.commands.executeCommand('workbench.action.openSettings', 'patto.cliPath');
-    }
-    else if (choice === 'Abrir README') {
-        await vscode.env.openExternal(vscode.Uri.parse('https://github.com/HormigaDev/patto-monorepo/tree/main/packages/vscode-extension#cli-setup'));
-    }
-}
-async function runPattoCore(cliPath, root, command) {
+async function runPattoCore(cliCommand, root, command) {
     const request = JSON.stringify({ command, root, lang: 'es' });
-    const invocation = buildCliInvocation(cliPath, ['core', '--stdin']);
-    const result = await (0, process_1.runProcess)(invocation.command, invocation.args, {
+    const result = await (0, process_1.runPattoCliProcess)(cliCommand, ['core', '--stdin'], {
         cwd: root,
         input: request,
     });
@@ -85,14 +72,8 @@ async function runPattoCore(cliPath, root, command) {
         throw new Error(`Patto CLI no devolvio JSON valido. stdout: ${result.stdout} stderr: ${result.stderr}`);
     }
 }
-function buildCliInvocation(cliPath, args) {
-    if (process.platform === 'win32' && cliPath.toLowerCase().endsWith('.cmd')) {
-        return {
-            command: 'cmd.exe',
-            args: ['/d', '/s', '/c', cliPath, ...args],
-        };
-    }
-    return { command: cliPath, args };
+function showCliSetupMessage() {
+    vscode.window.showWarningMessage(`Patto CLI no respondió. Instala ${CLI_PACKAGE}, asegúrate de que "patto" esté disponible en PATH o configura patto.cliPath.`);
 }
 function findWorkspaceCli() {
     const folders = vscode.workspace.workspaceFolders ?? [];
@@ -104,16 +85,5 @@ function findWorkspaceCli() {
         }
     }
     return null;
-}
-async function commandExists(command) {
-    const checker = process.platform === 'win32' ? 'where' : 'which';
-    const args = [command];
-    try {
-        const result = await (0, process_1.runProcess)(checker, args);
-        return result.exitCode === 0;
-    }
-    catch {
-        return false;
-    }
 }
 //# sourceMappingURL=cli.js.map

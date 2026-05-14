@@ -46,9 +46,9 @@ pub fn run_enabled_rules(context: &RuleContext<'_>, config: &RuleConfig) -> Vec<
             LintRule::ShardingRedisConfig => sharding_redis_config::run(context, severity),
             LintRule::ComponentHandlerMethods => component_handler_methods::run(context, severity),
             LintRule::FeatureConfig => feature_config::run(context, severity),
-            LintRule::I18nMissingKeys => i18n::run_missing_keys(context, severity),
-            LintRule::I18nDynamicKeys => i18n::run_dynamic_keys(context, severity),
-            LintRule::I18nLocaleParity => i18n::run_locale_parity(context, severity),
+            LintRule::I18nMissingKeys => i18n::missing_keys::run(context, severity),
+            LintRule::I18nDynamicKeys => i18n::dynamic_keys::run(context, severity),
+            LintRule::I18nLocaleParity => i18n::locale_parity::run(context, severity),
         });
     }
 

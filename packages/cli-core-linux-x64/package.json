@@ -1,6 +1,6 @@
 {
     "name": "@patto/cli-core-linux-x64",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "Patto CLI native core for Linux x64.",
     "os": [
         "linux"

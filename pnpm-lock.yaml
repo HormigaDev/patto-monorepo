@@ -31,16 +31,6 @@ importers:
       prompts:
         specifier: ^2.4.2
         version: 2.4.2
-    optionalDependencies:
-      '@patto/cli-core-linux-arm64':
-        specifier: 0.1.2
-        version: link:../cli-core-linux-arm64
-      '@patto/cli-core-linux-x64':
-        specifier: 0.1.2
-        version: link:../cli-core-linux-x64
-      '@patto/cli-core-win32-x64':
-        specifier: 0.1.2
-        version: link:../cli-core-win32-x64
     devDependencies:
       '@types/adm-zip':
         specifier: ^0.5.7

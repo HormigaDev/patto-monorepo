@@ -47,6 +47,12 @@ export async function runPattoCore(
     }
 }
 
+export async function runPattoFormatI18n(cliCommand: string, root: string) {
+    return runPattoCliProcess(cliCommand, ['format-i18n', '--root', root], {
+        cwd: root,
+    });
+}
+
 export function showCliSetupMessage(): void {
     vscode.window.showWarningMessage(
         `Patto CLI no respondió. Instala ${CLI_PACKAGE}, asegúrate de que "patto" esté disponible en PATH o configura patto.cliPath.`,

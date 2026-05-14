@@ -261,3 +261,47 @@ fn check_returns_structured_root_error_for_missing_root() {
             )
     );
 }
+
+#[test]
+fn format_i18n_sorts_locale_files_by_key() {
+    let project = minimal_project("format-i18n");
+    project.write(
+        "src/i18n/locale/es.ts",
+        r#"export const es = {
+    'zeta.ache.be': 'A',
+    'be.ache.zeta': 'B',
+};
+"#,
+    );
+    project.write(
+        "src/i18n/locale/en.ts",
+        r#"export const en = {
+    'reply.z': (value: string) => `Z, ${value}`,
+    'reply.a': ({ count }: { count: number }) => `${count}, A`,
+};
+"#,
+    );
+
+    let output = patto_core([
+        "format-i18n",
+        "--root",
+        project.path().to_str().expect("path should be utf8"),
+        "--json",
+    ]);
+    let body = json_output(&output);
+
+    assert!(output.status.success());
+    assert_eq!(body["status"], "ok");
+    assert_eq!(body["command"], "format-i18n");
+    assert_eq!(body["summary"]["filesFormatted"], 2);
+    assert_eq!(
+        fs::read_to_string(project.path().join("src/i18n/locale/es.ts"))
+            .expect("locale should be readable"),
+        "export const es = {\n    'be.ache.zeta': 'B',\n    'zeta.ache.be': 'A',\n};\n"
+    );
+    assert_eq!(
+        fs::read_to_string(project.path().join("src/i18n/locale/en.ts"))
+            .expect("locale should be readable"),
+        "export const en = {\n    'reply.a': ({ count }: { count: number }) => `${count}, A`,\n    'reply.z': (value: string) => `Z, ${value}`,\n};\n"
+    );
+}

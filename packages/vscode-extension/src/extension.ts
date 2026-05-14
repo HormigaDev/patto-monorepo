@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { resolvePattoCli, runPattoCore, showCliSetupMessage } from './cli';
 import { applyDiagnostics } from './diagnostics';
+import { registerI18nTranslationEditor } from './i18nEditor';
 import type { PattoCoreCommand } from './types';
 import {
     getActivePattoWorkspaceFolder,
@@ -18,6 +19,7 @@ export function activate(context: vscode.ExtensionContext): void {
     const collection = vscode.languages.createDiagnosticCollection('patto');
 
     context.subscriptions.push(output, collection);
+    context.subscriptions.push(...registerI18nTranslationEditor(output));
 
     const pattoFolders = getPattoWorkspaceFolders();
 

@@ -225,6 +225,14 @@ Ejecuta `scan + lint + doctor`. Este es el comando recomendado para CI e integra
 patto check --root /path/to/bot
 ```
 
+### format-i18n
+
+Ordena alfabeticamente las keys de los archivos `src/i18n/locale/*.ts` que exportan `export const <locale> = { ... }`. Es util para mantener estable el diff cuando la extension agrega traducciones inline.
+
+```bash
+patto format-i18n --root /path/to/bot
+```
+
 ## Salida legible para humanos
 
 Por defecto, los diagnósticos se muestran en un formato legible para humanos:
@@ -292,6 +300,7 @@ Valores compatibles para `command`:
 - `lint`
 - `doctor`
 - `check`
+- `format-i18n`
 
 ## Configuración
 

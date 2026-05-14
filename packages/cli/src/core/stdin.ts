@@ -14,7 +14,7 @@ export async function readCoreRequest(
     }
 
     if (!isCoreCommand(command)) {
-        throw new Error("El comando debe ser scan, lint, doctor o check.");
+        throw new Error("El comando debe ser scan, lint, doctor, check o format-i18n.");
     }
 
     return {
@@ -40,6 +40,7 @@ function isCoreCommand(value: string): value is CoreCommand {
         value === "scan" ||
         value === "lint" ||
         value === "doctor" ||
-        value === "check"
+        value === "check" ||
+        value === "format-i18n"
     );
 }

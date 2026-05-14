@@ -7,6 +7,7 @@ export function registerCoreCommands(cli) {
     registerCoreCommand(cli.command("lint", "Ejecuta reglas estaticas de Patto"), "lint");
     registerCoreCommand(cli.command("doctor", "Revisa salud del entorno Patto"), "doctor");
     registerCoreCommand(cli.command("check", "Ejecuta scan + lint + doctor"), "check");
+    registerCoreCommand(cli.command("format-i18n", "Ordena alfabeticamente los archivos de locale i18n"), "format-i18n");
     cli.command("core", "API JSON por stdin para extensiones")
         .option("--stdin", "Lee un request JSON desde stdin")
         .action(async (options) => {

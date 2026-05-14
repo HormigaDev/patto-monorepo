@@ -35,6 +35,7 @@ fn run() -> Result<i32> {
         Commands::Lint(args) => commands::lint::run(args, lang)?,
         Commands::Check(args) => commands::check::run(args, lang)?,
         Commands::Doctor(args) => commands::doctor::run(args, lang)?,
+        Commands::FormatI18n(args) => commands::format_i18n::run(args, lang)?,
     };
 
     Ok(exit_code)

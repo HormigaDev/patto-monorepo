@@ -32,6 +32,10 @@ export function registerCoreCommands(cli: CAC): void {
         cli.command("check", "Ejecuta scan + lint + doctor"),
         "check",
     );
+    registerCoreCommand(
+        cli.command("format-i18n", "Ordena alfabeticamente los archivos de locale i18n"),
+        "format-i18n",
+    );
 
     cli.command("core", "API JSON por stdin para extensiones")
         .option("--stdin", "Lee un request JSON desde stdin")

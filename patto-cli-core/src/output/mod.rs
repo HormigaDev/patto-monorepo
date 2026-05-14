@@ -1,5 +1,6 @@
 pub mod check_output;
 pub mod doctor_output;
+pub mod format_i18n_output;
 pub mod lint_output;
 pub mod scan_output;
 

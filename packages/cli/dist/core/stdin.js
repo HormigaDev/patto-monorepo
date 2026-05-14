@@ -7,7 +7,7 @@ export async function readCoreRequest(defaultCommand) {
         throw new Error('El JSON de stdin debe incluir "command".');
     }
     if (!isCoreCommand(command)) {
-        throw new Error("El comando debe ser scan, lint, doctor o check.");
+        throw new Error("El comando debe ser scan, lint, doctor, check o format-i18n.");
     }
     return {
         command,
@@ -28,6 +28,7 @@ function isCoreCommand(value) {
     return (value === "scan" ||
         value === "lint" ||
         value === "doctor" ||
-        value === "check");
+        value === "check" ||
+        value === "format-i18n");
 }
 //# sourceMappingURL=stdin.js.map

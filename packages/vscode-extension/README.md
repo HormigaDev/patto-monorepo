@@ -18,6 +18,8 @@ not download packages by itself.
 - Uses the `patto` command from your system `PATH`.
 - Runs an initial check when a Patto workspace opens.
 - Refreshes diagnostics after relevant files change or are saved, including `.patto/config.schema.json` and `src/i18n` locale files.
+- Shows an i18n hover action only for static keys like `this.t('ban.reply.done')` or aliases of `this.t`; dynamic keys and concatenations are ignored.
+- Lets you add or edit the Spanish value in `src/i18n/locale/es.ts` from an input box, then runs `patto format-i18n`.
 
 ## Requirements
 

@@ -19,6 +19,8 @@ pub enum Commands {
     Lint(CommonArgs),
     Check(CommonArgs),
     Doctor(CommonArgs),
+    #[command(name = "format-i18n")]
+    FormatI18n(CommonArgs),
 }
 
 #[derive(Debug, Clone, clap::Args)]

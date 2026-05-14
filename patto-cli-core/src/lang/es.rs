@@ -51,6 +51,30 @@ pub fn translate(key: &str) -> &'static str {
         "cli.doctor.completed" => {
             "patto-core doctor completed: {ok} ok, {warnings} advertencias, {errors} errores, {skipped} omitidos."
         }
+        "cli.format-i18n.root-invalid" => {
+            "patto-core format-i18n failed: la raíz del proyecto no es válida."
+        }
+        "cli.format-i18n.completed" => {
+            "patto-core format-i18n completed: {formatted} formateados, {unchanged} sin cambios, {skipped} omitidos."
+        }
+        "patto_format_i18n_locale_dir_missing" => "No se encontró src/i18n/locale.",
+        "patto_format_i18n_locale_dir_missing.hint" => {
+            "Crea los archivos de locale antes de ejecutar format-i18n."
+        }
+        "patto_format_i18n_file_unsupported.message" => {
+            "No se pudo formatear `{file}` porque no tiene un export const de locale soportado."
+        }
+        "patto_format_i18n_file_unsupported.hint" => {
+            "Usa archivos con forma export const es = { 'key': 'value' }."
+        }
+        "patto_format_i18n_file_read_failed.message" => "No se pudo leer `{file}`.",
+        "patto_format_i18n_file_read_failed.hint" => {
+            "Revisa permisos y que el archivo siga existiendo."
+        }
+        "patto_format_i18n_file_write_failed.message" => "No se pudo escribir `{file}`.",
+        "patto_format_i18n_file_write_failed.hint" => {
+            "Revisa permisos de escritura en src/i18n/locale."
+        }
         "patto_lint_rule_config_invalid.message" => {
             "La regla `{rule}` tiene severidad inválida: `{severity}`."
         }

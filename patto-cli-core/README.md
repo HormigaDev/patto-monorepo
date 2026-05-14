@@ -155,6 +155,16 @@ Checks include:
 - sharding/Redis configuration
 - build output
 
+### format-i18n
+
+Sorts locale object entries alphabetically by key for every `*.ts` file in `src/i18n/locale` that uses `export const <locale> = { ... }`. Values stay attached to their keys, including function-valued translations.
+
+```bash
+patto-core format-i18n --root /path/to/bot --json
+```
+
+This command is used by the VS Code extension after adding or editing inline i18n translations.
+
 ### check
 
 Runs the full validation pipeline:

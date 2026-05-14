@@ -50,6 +50,7 @@
         "onCommand:patto.check",
         "onCommand:patto.lint",
         "onCommand:patto.showCliSetup",
+        "onCommand:patto.editI18nTranslation",
         "workspaceContains:.patto/config.json",
         "workspaceContains:src/core/structures/BaseCommand.ts"
     ],
@@ -66,6 +67,10 @@
             {
                 "command": "patto.showCliSetup",
                 "title": "Patto: Show CLI Setup"
+            },
+            {
+                "command": "patto.editI18nTranslation",
+                "title": "Patto: Edit i18n Translation"
             }
         ],
         "configuration": {

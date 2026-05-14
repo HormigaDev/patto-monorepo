@@ -38,6 +38,7 @@ exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const cli_1 = require("./cli");
 const diagnostics_1 = require("./diagnostics");
+const i18nEditor_1 = require("./i18nEditor");
 const workspace_1 = require("./workspace");
 let diagnosticTimer;
 let scheduledFolder;
@@ -47,6 +48,7 @@ function activate(context) {
     const output = vscode.window.createOutputChannel('Patto');
     const collection = vscode.languages.createDiagnosticCollection('patto');
     context.subscriptions.push(output, collection);
+    context.subscriptions.push(...(0, i18nEditor_1.registerI18nTranslationEditor)(output));
     const pattoFolders = (0, workspace_1.getPattoWorkspaceFolders)();
     if (pattoFolders.length === 0) {
         output.appendLine('No Patto workspace detected. Patto extension is inactive for this workspace.');

@@ -38,7 +38,7 @@ Patto CLI se divide en dos capas:
 
 - **Core Rust (`patto-cli-core`)**
   - Analisis rapido del proyecto.
-  - Comandos pesados: `scan`, `lint`, `doctor` y `check`.
+  - Comandos pesados: `scan`, `lint`, `doctor`, `check` y `format-i18n`.
   - Salidas estructuradas con diagnostics, severidad, archivo, linea,
     columna e hints.
 
@@ -57,6 +57,7 @@ Comandos:
 - `lint`: ejecuta reglas estaticas especificas de Patto, incluidas reglas i18n cuando `features.i18n` esta activo.
 - `doctor`: revisa entorno, dependencias, configuracion, features y build.
 - `check`: agregador de CI que ejecuta scan + lint + doctor.
+- `format-i18n`: ordena alfabeticamente las keys de `src/i18n/locale/*.ts`.
 
 Ejemplo desde el directorio del core:
 
@@ -94,6 +95,7 @@ patto scan --root /ruta/al/bot
 patto lint --root /ruta/al/bot
 patto doctor --root /ruta/al/bot
 patto check --root /ruta/al/bot
+patto format-i18n --root /ruta/al/bot
 ```
 
 Salida JSON para herramientas:

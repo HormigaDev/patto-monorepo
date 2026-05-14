@@ -89,4 +89,8 @@ impl DiagnosticCode {
     pub const PATTO_DOCTOR_SHARDING_REDIS: &'static str = "doctor-sharding-redis";
     pub const PATTO_DOCTOR_BUILD_OUTPUT: &'static str = "doctor-build-output";
     pub const PATTO_DOCTOR_I18N: &'static str = "doctor-i18n";
+    pub const PATTO_FORMAT_I18N_LOCALE_DIR_MISSING: &'static str = "format-i18n-locale-dir-missing";
+    pub const PATTO_FORMAT_I18N_FILE_UNSUPPORTED: &'static str = "format-i18n-file-unsupported";
+    pub const PATTO_FORMAT_I18N_FILE_READ_FAILED: &'static str = "format-i18n-file-read-failed";
+    pub const PATTO_FORMAT_I18N_FILE_WRITE_FAILED: &'static str = "format-i18n-file-write-failed";
 }

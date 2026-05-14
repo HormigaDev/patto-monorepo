@@ -38,6 +38,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvePattoCli = resolvePattoCli;
 exports.runPattoCore = runPattoCore;
+exports.runPattoFormatI18n = runPattoFormatI18n;
 exports.showCliSetupMessage = showCliSetupMessage;
 const vscode = __importStar(require("vscode"));
 const node_fs_1 = require("node:fs");
@@ -71,6 +72,11 @@ async function runPattoCore(cliCommand, root, command) {
     catch {
         throw new Error(`Patto CLI no devolvio JSON valido. stdout: ${result.stdout} stderr: ${result.stderr}`);
     }
+}
+async function runPattoFormatI18n(cliCommand, root) {
+    return (0, process_1.runPattoCliProcess)(cliCommand, ['format-i18n', '--root', root], {
+        cwd: root,
+    });
 }
 function showCliSetupMessage() {
     vscode.window.showWarningMessage(`Patto CLI no respondió. Instala ${CLI_PACKAGE}, asegúrate de que "patto" esté disponible en PATH o configura patto.cliPath.`);

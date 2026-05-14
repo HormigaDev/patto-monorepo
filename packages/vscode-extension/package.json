@@ -118,7 +118,15 @@
                     "description": "Delay before running Patto diagnostics after a file changes."
                 }
             }
-        }
+        },
+        "keybindings": [
+            {
+                "command": "patto.editI18nTranslation",
+                "key": "ctrl+alt+t",
+                "mac": "ctrl+alt+t",
+                "when": "editorTextFocus && !editorReadonly"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p tsconfig.json",
